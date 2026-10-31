@@ -183,7 +183,7 @@ Files: `backend/negotiation/rules.py`, `solver.py`, `decision.py`, `baselines.py
 - `rules.derive_shared_constraint(world, agent, rule_id, option, round) -> SharedConstraint`
 - `solver.make_option(public, landing_time, runway, gate, turnaround, *, option_id, source, proposed_by, round) -> Option`
 - `solver.generate_options(public, shared, k, exclude, round, next_id) -> list[Option]` (§6)
-- `decision.decide(options, turns_by_round, rounds_used) -> Decision` incl. templated `party_messages`
+- `decision.decide(options, turns_by_round, rounds_used, fallback: Option | None) -> Decision` incl. templated `party_messages` (orchestrator computes `fallback` when an agent failed in the final round)
 - `baselines.compare(world, negotiated: Decision) -> list[PlanEvaluation]` (SOLVER_ONLY, NEGOTIATED, ORACLE, HISTORICAL)
 - Done when: unit tests on a hand-built §8 world give exactly the eliminations in the worked example.
 
@@ -209,6 +209,9 @@ Files: everything in `frontend/autonomous_hackathon/src/`, `vite.config.js` (add
 - Comparison panel (`comparison`): solver-only vs negotiated vs oracle vs historical.
 - Raw log + metrics (rounds, calls, latency, cost).
 - Start with a hand-made mock `NegotiationResult` built from `schemas.py` + §8; switch to `backend/fixtures/negotiation_example.json`, then live API.
+
+### Stand-ins until P1/P2 merge
+`backend/negotiation/devkit.py` (P3) has a hand-built DL912 world (`dl912_world()`, row 20919) and simple working versions of every P1/P2 function above, with the same signatures. The orchestrator uses your real module automatically as soon as it exists (`negotiation/world.py`, `data.py`, `solver.py`, `rules.py`, `decision.py`, `baselines.py`); `GET /api/health` shows which functions are `real` vs `dev`. P1/P2: use `dl912_world()` as your test fixture and feel free to copy logic from devkit. Force a mode with env `DEPS=dev|real`.
 
 ### Shared (tell the team before editing)
 `backend/negotiation/schemas.py`, `timeutil.py`, `PLAN.md`.

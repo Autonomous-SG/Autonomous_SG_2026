@@ -1,42 +1,57 @@
+from dotenv import load_dotenv
 
-from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field
-from anthropic import APIError
+load_dotenv()
 
-from claude_service import ask_claude
+from fastapi import FastAPI, HTTPException  # noqa: E402
+from fastapi.middleware.cors import CORSMiddleware  # noqa: E402
 
-app = FastAPI(title="Claude Hackathon API")
+from negotiation.agent_runner import model_name  # noqa: E402
+from negotiation.orchestrator import Log, load_deps, negotiate  # noqa: E402
+from negotiation.schemas import (  # noqa: E402
+    HumanDecisionRequest, NegotiateRequest, NegotiationResult, ScenarioSummary,
+)
+
+app = FastAPI(title="ATC / Pilot / Ground Negotiation API")
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
-    allow_methods=["POST"],
+    allow_methods=["GET", "POST"],
     allow_headers=["Content-Type"],
 )
 
-
-class ChatRequest(BaseModel):
-    message: str = Field(min_length=1, max_length=10000)
-
-
-class ChatResponse(BaseModel):
-    response: str
+DEPS = load_deps()
+RESULTS: dict[str, NegotiationResult] = {}
 
 
-@app.get("/health")
+@app.get("/api/health")
 def health():
-    return {"status": "ok"}
+    return {"status": "ok", "model": model_name(), "deps": DEPS.sources}
 
 
-@app.post("/api/chat", response_model=ChatResponse)
-def chat(request: ChatRequest):
+@app.get("/api/scenarios", response_model=list[ScenarioSummary])
+def scenarios(airport: str | None = None, date: str | None = None, limit: int = 50):
+    return DEPS.list_scenarios(airport, date, limit)
+
+
+@app.post("/api/negotiate", response_model=NegotiationResult)
+async def run_negotiation(req: NegotiateRequest):
     try:
-        answer = ask_claude(request.message)
-        return ChatResponse(response=answer)
+        result = await negotiate(req, DEPS)
+    except (ValueError, KeyError, IndexError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    RESULTS[result.scenario_id] = result
+    return result
 
-    except APIError:
-        raise HTTPException(
-            status_code=502,
-            detail="Unable to get a response from Claude."
-        )
+
+@app.post("/api/decision")
+def human_decision(req: HumanDecisionRequest):
+    result = RESULTS.get(req.scenario_id)
+    if result is None:
+        raise HTTPException(status_code=404, detail="Unknown scenario_id; run /api/negotiate first.")
+    log = Log()
+    log.entries = result.log
+    log.add(result.decision.rounds_used, "HUMAN", "HUMAN_DECISION",
+            f"Duty manager {'APPROVED' if req.approve else 'REJECTED'} the recommendation"
+            + (f": {req.note}" if req.note else ""))
+    return {"ok": True, "approved": req.approve}
