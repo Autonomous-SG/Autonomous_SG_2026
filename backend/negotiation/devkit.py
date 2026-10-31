@@ -99,7 +99,7 @@ def build_world(row_id: int, event: str, seed: int, attack: str = "NONE") -> Wor
     return dl912_world(seed, attack)
 
 
-def list_scenarios(airport=None, date=None, limit: int = 50) -> list[ScenarioSummary]:
+def list_scenarios(airport=None, date=None, limit: int = 50, origin=None) -> list[ScenarioSummary]:
     f = dl912_world().public.flight
     return [ScenarioSummary(row_id=f.row_id, date=f.date, flight=f"{f.airline}{f.flight_number}", origin=f.origin,
                             destination=f.destination, scheduled_arrival=f.scheduled_arrival,

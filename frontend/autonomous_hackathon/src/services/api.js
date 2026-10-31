@@ -33,10 +33,11 @@ async function request(path, { signal, timeout = 120000, ...options } = {}) {
   }
 }
 
-export async function listScenarios({ airport, date, signal }) {
+export async function listScenarios({ airport, date, origin, signal }) {
   const query = new URLSearchParams({ limit: '50' })
   if (airport) query.set('airport', airport)
   if (date) query.set('date', date)
+  if (origin) query.set('origin', origin)
   const data = await request(`/scenarios?${query}`, { signal })
   if (!Array.isArray(data) || data.some(item => !Number.isInteger(item.row_id) || typeof item.flight !== 'string')) {
     throw new Error('Scenario response does not match the agreed API format.')

@@ -234,8 +234,9 @@ def list_scenarios(
     airport: str | None = None,
     date: str | None = None,
     limit: int = 50,
+    origin: str | None = None,
 ) -> list[ScenarioSummary]:
-    """List real arrival rows that can be used as disruption scenarios."""
+    """List real arrival rows that can be used as disruption scenarios (airport = destination)."""
 
     if limit <= 0:
         return []
@@ -249,6 +250,9 @@ def list_scenarios(
         mask &= df[dest_col].fillna("").astype(str).str.upper().str.strip().eq(airport_key)
     if date_key:
         mask &= _date_series(df).eq(date_key)
+    origin_col = next((n for n in ("ORIGIN_AIRPORT", "ORIGIN", "origin") if n in df.columns), None)
+    if origin and origin_col:
+        mask &= df[origin_col].fillna("").astype(str).str.upper().str.strip().eq(origin.upper().strip())
     positions = {index: position for position, index in enumerate(df.index)} if not mask.all() else None
     scenarios: list[ScenarioSummary] = []
     for index, row in df.loc[mask].iterrows():

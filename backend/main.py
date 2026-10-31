@@ -38,8 +38,8 @@ def health():
 
 
 @app.get("/api/scenarios", response_model=list[ScenarioSummary])
-def scenarios(airport: str | None = None, date: str | None = None, limit: int = 50):
-    return DEPS.list_scenarios(airport, date, limit)
+def scenarios(airport: str | None = None, date: str | None = None, limit: int = 50, origin: str | None = None):
+    return DEPS.list_scenarios(airport, date, limit, origin=origin)
 
 
 @app.post("/api/negotiate", response_model=NegotiationResult)
