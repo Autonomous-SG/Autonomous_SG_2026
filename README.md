@@ -134,5 +134,5 @@ Private operational data is synthetic; one disrupted flight at a time; three dis
 |---|---|
 | World builder (scenarios from `flights.csv` + workbook) | Jasmitha |
 | Rules, solver, decision rule, baselines | Deepa |
-| Agents, orchestrator, API, evaluation | [name] |
+| Agents, orchestrator, API, evaluation | Shraddha |
 | Duty-manager UI | Sania |
