@@ -86,7 +86,10 @@ def dl912_world(seed: int = 42, attack: str = "NONE") -> World:
     )
     if attack == "NO_FEASIBLE":
         private.pilot.fuel_at_eta_kg = 3400
+        private.pilot.notes = private.pilot.notes.replace("FOB EST AT ATL ETA 4200KG", "FOB EST AT ATL ETA 3400KG")
         private.ground.gate_busy_until.update({"A21": from_csv(1830), "A23": from_csv(1830)})
+        private.ground.notes = private.ground.notes.replace(
+            "A21 open.", "A21 and A23 occupied by diverted widebodies until ~1830.")
     return World(public=public, private=private, seed=seed, attack=attack)
 
 
@@ -301,13 +304,14 @@ def decide(options: list[Option], turns_by_round: list[list[AgentTurn]], rounds_
             if a.option_id in scores and a.verdict == "ACCEPT":
                 scores[a.option_id].append(a.score)
     if failed or not options:
-        if not options and not failed:
+        if (not options and not failed) or (failed and fallback is None):
             return Decision(outcome="NO_FEASIBLE", option=None, min_score=None, rounds_used=rounds_used,
-                            explanation="Every option was vetoed on a confirmed hard rule. Escalate: consider holding "
-                                        "at an alternate or diverting.", party_messages=_messages(None))
+                            explanation="No option passes every hard rule. Escalate: consider holding at an "
+                                        "alternate or diverting.", party_messages=_messages(None))
         return Decision(outcome="FALLBACK", option=fallback, min_score=None, rounds_used=rounds_used,
-                        explanation=f"Agents unavailable or invalid ({', '.join(failed) or 'none'}); deterministic "
-                                    f"solver choice under known constraints. Human must confirm.",
+                        explanation=f"Agents unavailable or invalid ({', '.join(failed)}); deterministic solver "
+                                    f"choice that passes the rule checker, without those agents' preferences. "
+                                    f"Human must confirm with them.",
                         party_messages=_messages(fallback))
     ranked = sorted(options, key=lambda o: (-min(scores[o.option_id] or [0]), -sum(scores[o.option_id]),
                                             o.public_cost, o.landing_time))

@@ -225,12 +225,25 @@ async def negotiate(req: NegotiateRequest, deps: Deps, run_agent=agent_runner.ru
     final_turns = turns_by_round[-1] if turns_by_round else []
     assessed = {a.option_id for t in final_turns if t.response for a in t.response.assessments}
     final_options = [o for o in alive if o.option_id in assessed]
+
+    # Safety gate: nothing is recommended unless the referee confirms every hard rule, even if all agents accepted it.
+    def passes_gate(o: Option, why: str) -> bool:
+        fails = [c for c in deps.check_option(world, o) if c.hard and not c.passed]
+        if fails:
+            log.add(rounds_used, "CHECKER", "GUARDRAIL",
+                    f"Safety gate removed {o.option_id} ({why}): fails {', '.join(c.rule_id for c in fails)}",
+                    rule_checks=fails, ref=o.option_id)
+        return not fails
+
+    final_options = [o for o in final_options if passes_gate(o, "accepted by agents")]
     fallback = None
     if any(t.status != "OK" for t in final_turns):
-        fb = deps.generate_options(pub, shared, 1, [], 0, "A")
-        if fb:
-            match = next((o for o in seen if _key(o) == _key(fb[0])), None)
-            fallback = match or fb[0].model_copy(update={"option_id": ids.next()})
+        for cand in deps.generate_options(pub, shared, 10, [], 0, "A"):
+            match = next((o for o in seen if _key(o) == _key(cand)), None)
+            cand = match or cand.model_copy(update={"option_id": ids.next()})
+            if passes_gate(cand, "fallback candidate"):
+                fallback = cand
+                break
     decision = deps.decide(final_options, turns_by_round, rounds_used, fallback)
     log.add(rounds_used, "ORCH", "DECISION",
             f"{decision.outcome}: " + (_describe(decision.option) if decision.option else "no plan") + f". {decision.explanation}",

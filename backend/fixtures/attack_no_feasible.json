@@ -1,0 +1,1017 @@
+{
+  "scenario_id": "ATL-20150112-DL912-RUNWAY_CLOSURE",
+  "model": "claude-sonnet-5-5",
+  "world": {
+    "public": {
+      "scenario_id": "ATL-20150112-DL912-RUNWAY_CLOSURE",
+      "now": 1015,
+      "flight": {
+        "row_id": 20919,
+        "date": "2015-01-12",
+        "airline": "DL",
+        "flight_number": 912,
+        "tail_number": "N927DA",
+        "origin": "ORD",
+        "destination": "ATL",
+        "scheduled_departure": 840,
+        "scheduled_arrival": 1026,
+        "actual_arrival": 1114,
+        "arrival_delay": 88,
+        "departure_delay": 97,
+        "weather_delay": 76,
+        "late_aircraft_delay": 11,
+        "distance": 606,
+        "taxi_in": 9
+      },
+      "next_leg": {
+        "row_id": 21156,
+        "date": "2015-01-12",
+        "airline": "DL",
+        "flight_number": 2289,
+        "tail_number": "N927DA",
+        "origin": "ATL",
+        "destination": "AVL",
+        "scheduled_departure": 1074,
+        "scheduled_arrival": 1131,
+        "actual_arrival": 1214,
+        "arrival_delay": 83,
+        "departure_delay": 85,
+        "weather_delay": 0,
+        "late_aircraft_delay": 83,
+        "distance": 164,
+        "taxi_in": 3
+      },
+      "aircraft": {
+        "type": "MD-88",
+        "wake": "MEDIUM",
+        "min_turnaround_min": 40,
+        "expedited_turnaround_min": 30
+      },
+      "event": {
+        "type": "RUNWAY_CLOSURE",
+        "description": "Runway 27L closed: disabled aircraft on runway, tow requested",
+        "start": 1010,
+        "runway": "27L",
+        "gate": null,
+        "end_estimate": 1070
+      },
+      "runways": [
+        {
+          "name": "26R",
+          "open": true,
+          "reopen_estimate": null
+        },
+        {
+          "name": "27L",
+          "open": false,
+          "reopen_estimate": 1070
+        }
+      ],
+      "arrival_queue": [
+        {
+          "flight": "DL1052",
+          "wake": "MEDIUM",
+          "runway": "26R",
+          "landing_time": 1038,
+          "real": true
+        },
+        {
+          "flight": "DL811",
+          "wake": "HEAVY",
+          "runway": "26R",
+          "landing_time": 1041,
+          "real": true
+        },
+        {
+          "flight": "WN459",
+          "wake": "MEDIUM",
+          "runway": "26R",
+          "landing_time": 1046,
+          "real": true
+        },
+        {
+          "flight": "DL1761",
+          "wake": "MEDIUM",
+          "runway": "26R",
+          "landing_time": 1053,
+          "real": true
+        },
+        {
+          "flight": "DL2381",
+          "wake": "MEDIUM",
+          "runway": "26R",
+          "landing_time": 1060,
+          "real": true
+        }
+      ],
+      "eta_earliest": 1040,
+      "taxi_in_min": 9,
+      "planned_gate": "A17",
+      "gates": [
+        "A15",
+        "A17",
+        "A19",
+        "A21",
+        "A23"
+      ],
+      "synthetic_fields": [
+        "now",
+        "event",
+        "runways",
+        "arrival_queue[*].landing_time",
+        "arrival_queue[*].wake",
+        "aircraft",
+        "eta_earliest",
+        "planned_gate",
+        "gates"
+      ]
+    },
+    "private": {
+      "atc": {
+        "notes": "TWR/APP NOTE 1650L: RWY 27L CLSD - disabled acft on rwy, tow requested. Field est reopen ~1750L but tow crew says 'maybe 1800+'. West flow, 26R only rwy for arrivals, 28 deps only. DL811 HVY seq 26R 1721L. Sector saturated, AAR cut to 30/hr.",
+        "runway_reopen_actual": 1082,
+        "reopen_uncertainty_min": 15
+      },
+      "pilot": {
+        "notes": "DISPATCH/ACARS 1655L DL912 N927DA MD88: FOB EST AT ATL ETA 3400KG. MIN LDG FUEL 3300KG (ALTN BHM + 30MIN FINAL RES). HOLD BURN APPROX 45KG/MIN. PAX: 9 CNX TO DL72 ATL-AMS 1845L LAST AMS TODAY, INTL MCT 60MIN. 22 DOM CNX. ACFT NEXT LEG DL2289 AVL STD 1754L.",
+        "fuel_at_eta_kg": 3400,
+        "min_landing_fuel_kg": 3300,
+        "hold_burn_kg_per_min": 45,
+        "connections": [
+          {
+            "flight": "DL72",
+            "destination": "AMS",
+            "departure": 1125,
+            "pax": 9,
+            "min_connect_min": 60,
+            "last_of_day": true
+          }
+        ]
+      },
+      "ground": {
+        "notes": "RAMP CTRL A-CONC 1652L: A17 occupied by delayed outbound, est push 1750-1755. A15 occupied until ~1740. A19 jetbridge fault, tech ETA 1830. A21 and A23 occupied by diverted widebodies until ~1830. Team 3 (A15-A19) shift ends 1800, no OT authorised (2/5 at cap). Team 4 (A21-A23) on until 2200. Tug A-1 hyd leak OOS until 1830, A-2 avail.",
+        "gate_busy_until": {
+          "A15": 1060,
+          "A17": 1075,
+          "A19": 1110,
+          "A21": 1110,
+          "A23": 1110
+        },
+        "crew": [
+          {
+            "team": "3",
+            "gates": [
+              "A15",
+              "A17",
+              "A19"
+            ],
+            "shift_end": 1080,
+            "overtime_allowed": false
+          },
+          {
+            "team": "4",
+            "gates": [
+              "A21",
+              "A23"
+            ],
+            "shift_end": 1320,
+            "overtime_allowed": true
+          }
+        ],
+        "equipment": [
+          {
+            "id": "A-1",
+            "kind": "TUG",
+            "out_until": 1110
+          },
+          {
+            "id": "A-2",
+            "kind": "TUG",
+            "out_until": null
+          }
+        ]
+      }
+    },
+    "seed": 42,
+    "attack": "NO_FEASIBLE"
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "options": [
+        {
+          "option_id": "A",
+          "landing_time": 1044,
+          "runway": "26R",
+          "gate": "A17",
+          "turnaround": "STANDARD",
+          "hold_min": 4,
+          "in_gate_time": 1053,
+          "next_leg_departure": 1093,
+          "source": "SOLVER",
+          "proposed_by": null,
+          "round_introduced": 1,
+          "public_cost": 38.5,
+          "cost_breakdown": {
+            "arrival_delay": 27.0,
+            "hold": 2.0,
+            "gate_change": 0.0,
+            "expedited": 0.0,
+            "next_leg_delay": 9.5
+          }
+        },
+        {
+          "option_id": "B",
+          "landing_time": 1044,
+          "runway": "26R",
+          "gate": "A15",
+          "turnaround": "STANDARD",
+          "hold_min": 4,
+          "in_gate_time": 1053,
+          "next_leg_departure": 1093,
+          "source": "SOLVER",
+          "proposed_by": null,
+          "round_introduced": 1,
+          "public_cost": 48.5,
+          "cost_breakdown": {
+            "arrival_delay": 27.0,
+            "hold": 2.0,
+            "gate_change": 10.0,
+            "expedited": 0.0,
+            "next_leg_delay": 9.5
+          }
+        },
+        {
+          "option_id": "C",
+          "landing_time": 1044,
+          "runway": "26R",
+          "gate": "A19",
+          "turnaround": "STANDARD",
+          "hold_min": 4,
+          "in_gate_time": 1053,
+          "next_leg_departure": 1093,
+          "source": "SOLVER",
+          "proposed_by": null,
+          "round_introduced": 1,
+          "public_cost": 48.5,
+          "cost_breakdown": {
+            "arrival_delay": 27.0,
+            "hold": 2.0,
+            "gate_change": 10.0,
+            "expedited": 0.0,
+            "next_leg_delay": 9.5
+          }
+        }
+      ],
+      "turns": [
+        {
+          "agent": "ATC",
+          "round": 1,
+          "status": "OK",
+          "response": {
+            "assessments": [
+              {
+                "option_id": "A",
+                "verdict": "ACCEPT",
+                "score": 4,
+                "veto_rule": null,
+                "cited_rules": [
+                  "SECTOR_THROUGHPUT"
+                ],
+                "reason": "26R is open at 17:24, but the slot squeezes between DL811 at 17:21 and WN459 at 17:26 in a saturated sector with AAR cut to 30/hr. Soft penalty only.\n\n(Gate does not affect ATC.)"
+              },
+              {
+                "option_id": "B",
+                "verdict": "ACCEPT",
+                "score": 4,
+                "veto_rule": null,
+                "cited_rules": [
+                  "SECTOR_THROUGHPUT"
+                ],
+                "reason": "Same 17:24 slot on open 26R squeezed between DL811 and WN459 in a saturated sector; soft throughput penalty only. Gate is not an ATC matter.\n\n(No runway dependence on 27L.)"
+              },
+              {
+                "option_id": "C",
+                "verdict": "ACCEPT",
+                "score": 4,
+                "veto_rule": null,
+                "cited_rules": [
+                  "SECTOR_THROUGHPUT"
+                ],
+                "reason": "Same 17:24 slot on open 26R squeezed between DL811 and WN459 in a saturated sector; soft throughput penalty only. Gate is not an ATC matter.\n\n(No runway dependence on 27L.)"
+              }
+            ],
+            "counter_proposal": null
+          },
+          "veto_checks": [],
+          "counter_option_id": null,
+          "counter_checks": [],
+          "guardrail_flags": [],
+          "latency_ms": 6293,
+          "input_tokens": 3015,
+          "output_tokens": 758
+        },
+        {
+          "agent": "PILOT",
+          "round": 1,
+          "status": "OK",
+          "response": {
+            "assessments": [
+              {
+                "option_id": "A",
+                "verdict": "VETO",
+                "score": 0,
+                "veto_rule": "FUEL_RESERVE",
+                "cited_rules": [
+                  "FUEL_RESERVE"
+                ],
+                "reason": "Max hold is (3400-3300)/45 = 2.2 min. A holds 4 min, which would burn about 180 kg and take fuel below the 3300 kg minimum landing fuel.\n"
+              },
+              {
+                "option_id": "B",
+                "verdict": "VETO",
+                "score": 0,
+                "veto_rule": "FUEL_RESERVE",
+                "cited_rules": [
+                  "FUEL_RESERVE"
+                ],
+                "reason": "Max hold is 2.2 min from 100 kg spare fuel at 45 kg/min. B holds 4 min, which breaches the minimum landing fuel.\n"
+              },
+              {
+                "option_id": "C",
+                "verdict": "VETO",
+                "score": 0,
+                "veto_rule": "FUEL_RESERVE",
+                "cited_rules": [
+                  "FUEL_RESERVE"
+                ],
+                "reason": "Spare fuel of 100 kg allows only 2.2 min of holding. C holds 4 min, so it breaks the fuel reserve.\n"
+              }
+            ],
+            "counter_proposal": {
+              "based_on": "A",
+              "landing_time": "17:20",
+              "runway": "26R",
+              "gate": "A17",
+              "turnaround": "EXPEDITED",
+              "reason": "Landing at the earliest slot, 17:20, needs no hold and keeps fuel within reserve. An expedited turnaround protects the DL72 AMS connections and the 17:54 next leg."
+            }
+          },
+          "veto_checks": [
+            {
+              "rule_id": "FUEL_RESERVE",
+              "domain": "PILOT",
+              "hard": true,
+              "passed": false,
+              "detail": "hold 4 min, max 2 min",
+              "private": true
+            },
+            {
+              "rule_id": "FUEL_RESERVE",
+              "domain": "PILOT",
+              "hard": true,
+              "passed": false,
+              "detail": "hold 4 min, max 2 min",
+              "private": true
+            },
+            {
+              "rule_id": "FUEL_RESERVE",
+              "domain": "PILOT",
+              "hard": true,
+              "passed": false,
+              "detail": "hold 4 min, max 2 min",
+              "private": true
+            }
+          ],
+          "counter_option_id": "D",
+          "counter_checks": [
+            {
+              "rule_id": "RUNWAY_OPEN",
+              "domain": "ATC",
+              "hard": true,
+              "passed": true,
+              "detail": "26R open",
+              "private": false
+            },
+            {
+              "rule_id": "WAKE_SEPARATION",
+              "domain": "ATC",
+              "hard": true,
+              "passed": false,
+              "detail": "1 min from DL811 (HEAVY), need 2",
+              "private": false
+            },
+            {
+              "rule_id": "MIN_TURNAROUND",
+              "domain": "GROUND",
+              "hard": true,
+              "passed": true,
+              "detail": "30 min turnaround, need 30",
+              "private": false
+            },
+            {
+              "rule_id": "FUEL_RESERVE",
+              "domain": "PILOT",
+              "hard": true,
+              "passed": true,
+              "detail": "hold 0 min, max 2 min",
+              "private": true
+            },
+            {
+              "rule_id": "GATE_CONFLICT",
+              "domain": "GROUND",
+              "hard": true,
+              "passed": false,
+              "detail": "A17 free at 17:55, in-gate 17:29",
+              "private": true
+            },
+            {
+              "rule_id": "CREW_DUTY_LIMIT",
+              "domain": "GROUND",
+              "hard": true,
+              "passed": true,
+              "detail": "team 3 shift ends 18:00, turn ends 17:59",
+              "private": true
+            },
+            {
+              "rule_id": "EQUIPMENT_AVAILABLE",
+              "domain": "GROUND",
+              "hard": true,
+              "passed": true,
+              "detail": "1 tug(s) available",
+              "private": true
+            },
+            {
+              "rule_id": "PAX_CONNECTION",
+              "domain": "PILOT",
+              "hard": false,
+              "passed": true,
+              "detail": "0 connecting pax would miss",
+              "private": true
+            },
+            {
+              "rule_id": "NEXT_LEG_DELAY",
+              "domain": "PILOT",
+              "hard": false,
+              "passed": true,
+              "detail": "next leg ~5 min late",
+              "private": false
+            },
+            {
+              "rule_id": "GATE_CHANGE",
+              "domain": "GROUND",
+              "hard": false,
+              "passed": true,
+              "detail": "gate A17 (planned A17)",
+              "private": false
+            }
+          ],
+          "guardrail_flags": [],
+          "latency_ms": 6868,
+          "input_tokens": 3062,
+          "output_tokens": 911
+        },
+        {
+          "agent": "GROUND",
+          "round": 1,
+          "status": "OK",
+          "response": {
+            "assessments": [
+              {
+                "option_id": "A",
+                "verdict": "VETO",
+                "score": 0,
+                "veto_rule": "GATE_CONFLICT",
+                "cited_rules": [
+                  "GATE_CONFLICT"
+                ],
+                "reason": "A17 is occupied by a delayed outbound with estimated push 17:50-17:55, so it is not free at the 17:33 in-gate time."
+              },
+              {
+                "option_id": "B",
+                "verdict": "VETO",
+                "score": 0,
+                "veto_rule": "CREW_DUTY_LIMIT",
+                "cited_rules": [
+                  "CREW_DUTY_LIMIT",
+                  "GATE_CHANGE"
+                ],
+                "reason": "A15 is free by 17:40 but not at 17:33, so there is a gate conflict; also Team 3 shift ends 18:00 with no OT, before the 18:13 off-block.  Crew limit is the clear breach.  "
+              },
+              {
+                "option_id": "C",
+                "verdict": "VETO",
+                "score": 0,
+                "veto_rule": "GATE_CONFLICT",
+                "cited_rules": [
+                  "GATE_CONFLICT",
+                  "CREW_DUTY_LIMIT"
+                ],
+                "reason": "A19 has a jetbridge fault until tech ETA 18:30, and Team 3 shift ends 18:00 with no OT, before the 18:13 off-block."
+              }
+            ],
+            "counter_proposal": null
+          },
+          "veto_checks": [
+            {
+              "rule_id": "GATE_CONFLICT",
+              "domain": "GROUND",
+              "hard": true,
+              "passed": false,
+              "detail": "A17 free at 17:55, in-gate 17:33",
+              "private": true
+            },
+            {
+              "rule_id": "CREW_DUTY_LIMIT",
+              "domain": "GROUND",
+              "hard": true,
+              "passed": false,
+              "detail": "team 3 shift ends 18:00, turn ends 18:13",
+              "private": true
+            },
+            {
+              "rule_id": "GATE_CONFLICT",
+              "domain": "GROUND",
+              "hard": true,
+              "passed": false,
+              "detail": "A19 free at 18:30, in-gate 17:33",
+              "private": true
+            }
+          ],
+          "counter_option_id": null,
+          "counter_checks": [],
+          "guardrail_flags": [],
+          "latency_ms": 3417,
+          "input_tokens": 3081,
+          "output_tokens": 427
+        }
+      ],
+      "new_shared_constraints": [
+        {
+          "kind": "LATEST_LANDING",
+          "statement": "DL912 must land by 17:22",
+          "time": 1042,
+          "gate": null,
+          "runway": null,
+          "from_rule": "FUEL_RESERVE",
+          "from_agent": "PILOT",
+          "round": 1
+        },
+        {
+          "kind": "GATE_UNAVAILABLE",
+          "statement": "Gate A17 unavailable before 17:55",
+          "time": 1075,
+          "gate": "A17",
+          "runway": null,
+          "from_rule": "GATE_CONFLICT",
+          "from_agent": "GROUND",
+          "round": 1
+        },
+        {
+          "kind": "TURNAROUND_DEADLINE",
+          "statement": "Turnaround at A15 must finish by 18:00",
+          "time": 1080,
+          "gate": "A15",
+          "runway": null,
+          "from_rule": "CREW_DUTY_LIMIT",
+          "from_agent": "GROUND",
+          "round": 1
+        },
+        {
+          "kind": "GATE_UNAVAILABLE",
+          "statement": "Gate A19 unavailable before 18:30",
+          "time": 1110,
+          "gate": "A19",
+          "runway": null,
+          "from_rule": "GATE_CONFLICT",
+          "from_agent": "GROUND",
+          "round": 1
+        }
+      ],
+      "eliminated": [
+        "A",
+        "B",
+        "C"
+      ]
+    }
+  ],
+  "decision": {
+    "outcome": "NO_FEASIBLE",
+    "option": null,
+    "min_score": null,
+    "rounds_used": 1,
+    "explanation": "No option passes every hard rule. Escalate: consider holding at an alternate or diverting.",
+    "party_messages": {
+      "ATC": "No feasible landing plan. Coordinate holding/diversion with airline.",
+      "PILOT": "No feasible landing plan at destination. Prepare for diversion; await instruction.",
+      "GROUND": "No arrival plan agreed. Hold resources; await instruction."
+    },
+    "requires_human": true
+  },
+  "comparison": [
+    {
+      "label": "SOLVER_ONLY",
+      "option": {
+        "option_id": "S",
+        "landing_time": 1044,
+        "runway": "26R",
+        "gate": "A17",
+        "turnaround": "STANDARD",
+        "hold_min": 4,
+        "in_gate_time": 1053,
+        "next_leg_departure": 1093,
+        "source": "SOLVER",
+        "proposed_by": null,
+        "round_introduced": 0,
+        "public_cost": 38.5,
+        "cost_breakdown": {
+          "arrival_delay": 27.0,
+          "hold": 2.0,
+          "gate_change": 0.0,
+          "expedited": 0.0,
+          "next_leg_delay": 9.5
+        }
+      },
+      "feasible_in_reality": false,
+      "failed_rules": [
+        "FUEL_RESERVE",
+        "GATE_CONFLICT",
+        "CREW_DUTY_LIMIT"
+      ],
+      "arrival_delay_min": 49,
+      "next_leg_delay_min": 41,
+      "connection_pax_missed": 9,
+      "note": "Solver with public data only, fixed weights."
+    },
+    {
+      "label": "NEGOTIATED",
+      "option": null,
+      "feasible_in_reality": null,
+      "failed_rules": [],
+      "arrival_delay_min": null,
+      "next_leg_delay_min": null,
+      "connection_pax_missed": null,
+      "note": "Outcome: NO_FEASIBLE."
+    },
+    {
+      "label": "ORACLE",
+      "option": null,
+      "feasible_in_reality": null,
+      "failed_rules": [],
+      "arrival_delay_min": null,
+      "next_leg_delay_min": null,
+      "connection_pax_missed": null,
+      "note": "Solver that sees all private data (upper bound), fixed weights."
+    },
+    {
+      "label": "HISTORICAL",
+      "option": null,
+      "feasible_in_reality": null,
+      "failed_rules": [],
+      "arrival_delay_min": 88,
+      "next_leg_delay_min": 85,
+      "connection_pax_missed": null,
+      "note": "What actually happened in 2015 (real weather, not our injected event): indicative only."
+    }
+  ],
+  "log": [
+    {
+      "seq": 1,
+      "wall_time": "2026-10-31T12:10:06+08:00",
+      "round": 0,
+      "actor": "ORCH",
+      "kind": "SCENARIO",
+      "summary": "Scenario ATL-20150112-DL912-RUNWAY_CLOSURE: DL912 ORD->ATL, event RUNWAY_CLOSURE, attack NO_FEASIBLE",
+      "rule_checks": [],
+      "ref": "flights.csv#20919"
+    },
+    {
+      "seq": 2,
+      "wall_time": "2026-10-31T12:10:06+08:00",
+      "round": 1,
+      "actor": "SOLVER",
+      "kind": "OPTIONS",
+      "summary": "New options: A: 17:24 26R gate A17 standard; B: 17:24 26R gate A15 standard; C: 17:24 26R gate A19 standard",
+      "rule_checks": [],
+      "ref": null
+    },
+    {
+      "seq": 3,
+      "wall_time": "2026-10-31T12:10:13+08:00",
+      "round": 1,
+      "actor": "ATC",
+      "kind": "ASSESSMENT",
+      "summary": "A=4, B=4, C=4",
+      "rule_checks": [],
+      "ref": null
+    },
+    {
+      "seq": 4,
+      "wall_time": "2026-10-31T12:10:13+08:00",
+      "round": 1,
+      "actor": "PILOT",
+      "kind": "ASSESSMENT",
+      "summary": "A=VETO FUEL_RESERVE, B=VETO FUEL_RESERVE, C=VETO FUEL_RESERVE",
+      "rule_checks": [],
+      "ref": null
+    },
+    {
+      "seq": 5,
+      "wall_time": "2026-10-31T12:10:13+08:00",
+      "round": 1,
+      "actor": "CHECKER",
+      "kind": "VETO_CHECK",
+      "summary": "PILOT veto of A (FUEL_RESERVE) confirmed",
+      "rule_checks": [
+        {
+          "rule_id": "FUEL_RESERVE",
+          "domain": "PILOT",
+          "hard": true,
+          "passed": false,
+          "detail": "hold 4 min, max 2 min",
+          "private": true
+        }
+      ],
+      "ref": "A"
+    },
+    {
+      "seq": 6,
+      "wall_time": "2026-10-31T12:10:13+08:00",
+      "round": 1,
+      "actor": "ORCH",
+      "kind": "SHARED_CONSTRAINT",
+      "summary": "DL912 must land by 17:22",
+      "rule_checks": [],
+      "ref": "A"
+    },
+    {
+      "seq": 7,
+      "wall_time": "2026-10-31T12:10:13+08:00",
+      "round": 1,
+      "actor": "CHECKER",
+      "kind": "VETO_CHECK",
+      "summary": "PILOT veto of B (FUEL_RESERVE) confirmed",
+      "rule_checks": [
+        {
+          "rule_id": "FUEL_RESERVE",
+          "domain": "PILOT",
+          "hard": true,
+          "passed": false,
+          "detail": "hold 4 min, max 2 min",
+          "private": true
+        }
+      ],
+      "ref": "B"
+    },
+    {
+      "seq": 8,
+      "wall_time": "2026-10-31T12:10:13+08:00",
+      "round": 1,
+      "actor": "CHECKER",
+      "kind": "VETO_CHECK",
+      "summary": "PILOT veto of C (FUEL_RESERVE) confirmed",
+      "rule_checks": [
+        {
+          "rule_id": "FUEL_RESERVE",
+          "domain": "PILOT",
+          "hard": true,
+          "passed": false,
+          "detail": "hold 4 min, max 2 min",
+          "private": true
+        }
+      ],
+      "ref": "C"
+    },
+    {
+      "seq": 9,
+      "wall_time": "2026-10-31T12:10:13+08:00",
+      "round": 1,
+      "actor": "PILOT",
+      "kind": "COUNTER",
+      "summary": "Counter D: 17:20 26R gate A17 expedited \u2014 Landing at the earliest slot, 17:20, needs no hold and keeps fuel within reserve. An expedited turnaround protects the DL72 AMS connections and the 17:54 next leg.",
+      "rule_checks": [],
+      "ref": "D"
+    },
+    {
+      "seq": 10,
+      "wall_time": "2026-10-31T12:10:13+08:00",
+      "round": 1,
+      "actor": "CHECKER",
+      "kind": "COUNTER_CHECK",
+      "summary": "Counter D failed WAKE_SEPARATION, GATE_CONFLICT",
+      "rule_checks": [
+        {
+          "rule_id": "RUNWAY_OPEN",
+          "domain": "ATC",
+          "hard": true,
+          "passed": true,
+          "detail": "26R open",
+          "private": false
+        },
+        {
+          "rule_id": "WAKE_SEPARATION",
+          "domain": "ATC",
+          "hard": true,
+          "passed": false,
+          "detail": "1 min from DL811 (HEAVY), need 2",
+          "private": false
+        },
+        {
+          "rule_id": "MIN_TURNAROUND",
+          "domain": "GROUND",
+          "hard": true,
+          "passed": true,
+          "detail": "30 min turnaround, need 30",
+          "private": false
+        },
+        {
+          "rule_id": "FUEL_RESERVE",
+          "domain": "PILOT",
+          "hard": true,
+          "passed": true,
+          "detail": "hold 0 min, max 2 min",
+          "private": true
+        },
+        {
+          "rule_id": "GATE_CONFLICT",
+          "domain": "GROUND",
+          "hard": true,
+          "passed": false,
+          "detail": "A17 free at 17:55, in-gate 17:29",
+          "private": true
+        },
+        {
+          "rule_id": "CREW_DUTY_LIMIT",
+          "domain": "GROUND",
+          "hard": true,
+          "passed": true,
+          "detail": "team 3 shift ends 18:00, turn ends 17:59",
+          "private": true
+        },
+        {
+          "rule_id": "EQUIPMENT_AVAILABLE",
+          "domain": "GROUND",
+          "hard": true,
+          "passed": true,
+          "detail": "1 tug(s) available",
+          "private": true
+        },
+        {
+          "rule_id": "PAX_CONNECTION",
+          "domain": "PILOT",
+          "hard": false,
+          "passed": true,
+          "detail": "0 connecting pax would miss",
+          "private": true
+        },
+        {
+          "rule_id": "NEXT_LEG_DELAY",
+          "domain": "PILOT",
+          "hard": false,
+          "passed": true,
+          "detail": "next leg ~5 min late",
+          "private": false
+        },
+        {
+          "rule_id": "GATE_CHANGE",
+          "domain": "GROUND",
+          "hard": false,
+          "passed": true,
+          "detail": "gate A17 (planned A17)",
+          "private": false
+        }
+      ],
+      "ref": "D"
+    },
+    {
+      "seq": 11,
+      "wall_time": "2026-10-31T12:10:13+08:00",
+      "round": 1,
+      "actor": "GROUND",
+      "kind": "ASSESSMENT",
+      "summary": "A=VETO GATE_CONFLICT, B=VETO CREW_DUTY_LIMIT, C=VETO GATE_CONFLICT",
+      "rule_checks": [],
+      "ref": null
+    },
+    {
+      "seq": 12,
+      "wall_time": "2026-10-31T12:10:13+08:00",
+      "round": 1,
+      "actor": "CHECKER",
+      "kind": "VETO_CHECK",
+      "summary": "GROUND veto of A (GATE_CONFLICT) confirmed",
+      "rule_checks": [
+        {
+          "rule_id": "GATE_CONFLICT",
+          "domain": "GROUND",
+          "hard": true,
+          "passed": false,
+          "detail": "A17 free at 17:55, in-gate 17:33",
+          "private": true
+        }
+      ],
+      "ref": "A"
+    },
+    {
+      "seq": 13,
+      "wall_time": "2026-10-31T12:10:13+08:00",
+      "round": 1,
+      "actor": "ORCH",
+      "kind": "SHARED_CONSTRAINT",
+      "summary": "Gate A17 unavailable before 17:55",
+      "rule_checks": [],
+      "ref": "A"
+    },
+    {
+      "seq": 14,
+      "wall_time": "2026-10-31T12:10:13+08:00",
+      "round": 1,
+      "actor": "CHECKER",
+      "kind": "VETO_CHECK",
+      "summary": "GROUND veto of B (CREW_DUTY_LIMIT) confirmed",
+      "rule_checks": [
+        {
+          "rule_id": "CREW_DUTY_LIMIT",
+          "domain": "GROUND",
+          "hard": true,
+          "passed": false,
+          "detail": "team 3 shift ends 18:00, turn ends 18:13",
+          "private": true
+        }
+      ],
+      "ref": "B"
+    },
+    {
+      "seq": 15,
+      "wall_time": "2026-10-31T12:10:13+08:00",
+      "round": 1,
+      "actor": "ORCH",
+      "kind": "SHARED_CONSTRAINT",
+      "summary": "Turnaround at A15 must finish by 18:00",
+      "rule_checks": [],
+      "ref": "B"
+    },
+    {
+      "seq": 16,
+      "wall_time": "2026-10-31T12:10:13+08:00",
+      "round": 1,
+      "actor": "CHECKER",
+      "kind": "VETO_CHECK",
+      "summary": "GROUND veto of C (GATE_CONFLICT) confirmed",
+      "rule_checks": [
+        {
+          "rule_id": "GATE_CONFLICT",
+          "domain": "GROUND",
+          "hard": true,
+          "passed": false,
+          "detail": "A19 free at 18:30, in-gate 17:33",
+          "private": true
+        }
+      ],
+      "ref": "C"
+    },
+    {
+      "seq": 17,
+      "wall_time": "2026-10-31T12:10:13+08:00",
+      "round": 1,
+      "actor": "ORCH",
+      "kind": "SHARED_CONSTRAINT",
+      "summary": "Gate A19 unavailable before 18:30",
+      "rule_checks": [],
+      "ref": "C"
+    },
+    {
+      "seq": 18,
+      "wall_time": "2026-10-31T12:10:13+08:00",
+      "round": 2,
+      "actor": "ORCH",
+      "kind": "DECISION",
+      "summary": "No options left to negotiate",
+      "rule_checks": [],
+      "ref": null
+    },
+    {
+      "seq": 19,
+      "wall_time": "2026-10-31T12:10:13+08:00",
+      "round": 1,
+      "actor": "ORCH",
+      "kind": "DECISION",
+      "summary": "NO_FEASIBLE: no plan. No option passes every hard rule. Escalate: consider holding at an alternate or diverting.",
+      "rule_checks": [],
+      "ref": null
+    }
+  ],
+  "metrics": {
+    "rounds_used": 1,
+    "llm_calls": 3,
+    "invalid_outputs": 0,
+    "vetoes_confirmed": 6,
+    "vetoes_rejected": 0,
+    "counters_proposed": 1,
+    "counters_passed": 0,
+    "input_tokens": 9158,
+    "output_tokens": 2096,
+    "est_cost_usd": 0.0393,
+    "wall_ms": 6971
+  }
+}
