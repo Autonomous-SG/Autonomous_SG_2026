@@ -1,24 +1,24 @@
-"""Small, deterministic airport catalogue used by the world builder.
+"""Deterministic airport names backed by the organiser's capacity limits.
 
-The DOT data contains airport codes, but it does not contain the operational
-runway/gate state needed by a negotiation scenario.  This module deliberately
-keeps that synthetic catalogue small: the three airports called out in the
-project plan use real runway names, while every other airport gets a clearly
-synthetic pair.
+The DOT data supplies airport codes, not the operational runway/gate state
+needed by a negotiation scenario.  ``constraints.py`` supplies the number of
+active runways and spare gates; this module supplies readable runway and gate
+names for those synthetic resources.
 """
 from __future__ import annotations
 
 from typing import Final
 
+from . import constraints
 
-# These are representative runway pairs used by the demo.  They are real
-# runway designators, rather than airport/runway data being inferred from the
-# flight CSV.  Keeping two per airport also makes the generated scenarios easy
-# to read in the UI and leaves one runway available during a closure.
-REAL_RUNWAYS: Final[dict[str, tuple[str, str]]] = {
-    "ATL": ("26R", "27L"),
-    "ORD": ("27R", "28C"),
-    "DFW": ("17R", "18L"),
+
+# These are representative real runway designators, rather than runway data
+# inferred from the flight CSV.  The workbook decides how many are active in a
+# scenario; the extra names make that count visible for the large hubs.
+REAL_RUNWAYS: Final[dict[str, tuple[str, ...]]] = {
+    "ATL": ("26R", "27L", "26L", "27R"),
+    "ORD": ("27R", "28C", "27L", "28R"),
+    "DFW": ("17R", "18L", "17C", "18R"),
 }
 
 AIRPORT_GATES: Final[dict[str, tuple[str, ...]]] = {
@@ -31,15 +31,38 @@ DEFAULT_GATES: Final[tuple[str, ...]] = ("G1", "G2", "G3", "G4", "G5")
 
 
 def runway_names(airport: str) -> list[str]:
-    """Return the synthetic scenario's runway names for ``airport``."""
+    """Return exactly the configured number of active runway names."""
 
     code = (airport or "").upper()
-    return list(REAL_RUNWAYS.get(code, ("RWY-1", "RWY-2")))
+    count = constraints.airport(code).active_runways
+    catalog = list(REAL_RUNWAYS.get(code, ()))
+    if len(catalog) < count:
+        catalog.extend(f"RWY-{index}" for index in range(len(catalog) + 1, count + 1))
+    return catalog[:count]
 
 
-def gate_names(airport: str) -> list[str]:
-    """Return a small set of assignable gates for ``airport``."""
+def gate_names(airport: str, planned_gate: str | None = None) -> list[str]:
+    """Return the planned gate followed by the configured spare gates.
+
+    ``planned_gate`` is optional for compatibility with callers that only need
+    a deterministic pool.  The world builder supplies it so the public gate
+    list has the exact shape required by the workbook: one planned gate plus
+    ``spare_gates`` alternatives.
+    """
 
     code = (airport or "").upper()
-    return list(AIRPORT_GATES.get(code, DEFAULT_GATES))
+    limits = constraints.airport(code)
+    catalog = list(AIRPORT_GATES.get(code, DEFAULT_GATES))
+    if planned_gate is None:
+        planned_gate = catalog[0]
+    elif planned_gate not in catalog:
+        catalog.insert(0, planned_gate)
+
+    ordered = [planned_gate] + [gate for gate in catalog if gate != planned_gate]
+    needed = 1 + limits.spare_gates
+    while len(ordered) < needed:
+        candidate = f"{code or 'G'}{len(ordered) + 1}"
+        if candidate not in ordered:
+            ordered.append(candidate)
+    return ordered[:needed]
 
