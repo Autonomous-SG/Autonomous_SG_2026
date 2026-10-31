@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
-import { airports, attacks, events } from '../utils/scenarioOptions'
+import { attacks, events } from '../utils/scenarioOptions'
+import AirportPicker from './AirportPicker'
 import { listScenarios } from '../services/api'
 import { formatMinute } from '../utils/time'
 
 export default function ScenarioPicker({ busy, onRun }) {
+  const [source, setSource] = useState('')
   const [airport, setAirport] = useState('')
   const [date, setDate] = useState('')
   const [selectedId, setSelectedId] = useState('')
@@ -29,7 +31,9 @@ export default function ScenarioPicker({ busy, onRun }) {
 
   const ready = remote.key === queryKey && remote.status === 'ready'
   const failed = remote.key === queryKey && remote.status === 'error'
-  const matches = ready ? remote.rows.map(row => ({ ...row, id: String(row.row_id) })) : []
+  const matches = ready ? remote.rows
+    .filter(row => !source || row.origin === source)
+    .map(row => ({ ...row, id: String(row.row_id) })) : []
   const selected = matches.find(entry => entry.id === selectedId) ?? matches[0]
 
   function submit(e) {
@@ -43,7 +47,8 @@ export default function ScenarioPicker({ busy, onRun }) {
     <form onSubmit={submit}>
       <fieldset disabled={busy}>
         <div className="controls">
-          <label>Destination airport<input list="airport-options" placeholder="All airports" value={airport} maxLength={3} onChange={e => setAirport(e.target.value.toUpperCase().replace(/[^A-Z]/g, ''))} /><datalist id="airport-options">{Object.keys(airports).filter(code => code !== 'AVL').map(code =><option key={code} value={code}>{airports[code]}</option>)}</datalist></label>
+          <AirportPicker label="Source airport" value={source} onChange={setSource} />
+          <AirportPicker label="Destination airport" value={airport} onChange={setAirport} />
           <label>Flight date<input type="date" value={date} onChange={e => setDate(e.target.value)} /></label>
           <label>Disruption<select value={event} onChange={e => setEvent(e.target.value)}>{events.map(item => <option key={item.value} value={item.value}>{item.label}</option>)}</select></label>
           <label>Test condition<select value={attack} onChange={e => setAttack(e.target.value)}>{attacks.map(item => <option key={item.value} value={item.value}>{item.label}</option>)}</select></label>
@@ -55,7 +60,8 @@ export default function ScenarioPicker({ busy, onRun }) {
           </select></label>
           <button className="run-button" type="submit" disabled={!selected || !ready || busy}>{busy ? 'Running…' : 'Run negotiation'} <span aria-hidden="true">↗</span></button>
         </div>
-        <div className="picker-footer"><p className="field-hint" role="status">{failed ? 'Unable to load flights. Check the connection and retry.' : ready ? matches.length ? `${matches.length} matching flights (up to 50 per search). Run to load the selected scenario.` : 'No flights match. Change the filters or clear them.' : 'Fetching flights from the backend. The first load can take up to two minutes…'}</p><button type="button" className="text-button" onClick={() => { setAirport(''); setDate(''); setSelectedId('') }}>Clear filters</button></div>
+        <div className="picker-footer"><p className="field-hint" role="status">{failed ? 'Unable to load flights. Check the connection and retry.' : ready ? matches.length ? `${matches.length} matching flights${source ? ` from ${source} among ${remote.rows.length} loaded flights` : ' (up to 50 per search)'}. Run to load the selected scenario.` : source && remote.rows.length ? `No flights from ${source} in the loaded results. Refine destination/date or clear the source filter.` : 'No flights match. Change the filters or clear them.' : 'Fetching flights from the backend. The first load can take up to two minutes…'}</p><button type="button" className="text-button" onClick={() => { setSource(''); setAirport(''); setDate(''); setSelectedId('') }}>Clear filters</button></div>
+        {ready && source && remote.rows.length === 50 && <p className="field-hint">Source filters the first 50 flights returned for your destination/date. Narrow those filters to find additional flights.</p>}
         {failed && <div className="error-message" role="alert"><p>{remote.error}</p><button type="button" className="text-button" onClick={() => setRetry(value => value + 1)}>Retry connection</button></div>}
         <p className="field-hint">Flight data and negotiation results come from the backend. Each run may make paid model calls.</p>
       </fieldset>

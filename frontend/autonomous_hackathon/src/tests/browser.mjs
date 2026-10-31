@@ -3,6 +3,8 @@
 import assert from 'node:assert/strict'
 import { chromium } from 'playwright'
 import { readFile } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import { validateResult } from '../services/validateResult.js'
 
 const fixture = validateResult(JSON.parse(await readFile(new URL('../../../../backend/fixtures/negotiation_example.json', import.meta.url), 'utf8')))
@@ -38,6 +40,30 @@ try {
   failList = false
   await page.getByRole('button', { name: 'Retry connection' }).click()
   await page.waitForFunction(() => [...document.querySelectorAll('button')].some(button => button.textContent.includes('Run negotiation') && !button.disabled))
+  assert.equal(await page.locator('datalist').count(), 0)
+  await page.getByLabel('Source airport', { exact: true }).fill('Boston')
+  await page.getByRole('option', { name: /BOS.*Boston/ }).click()
+  await page.getByText('No flights from BOS in the loaded results.', { exact: false }).waitFor()
+  assert.equal(await page.getByRole('button', { name: /Run negotiation/ }).isDisabled(), true)
+  await page.getByLabel('Source airport', { exact: true }).fill('ord')
+  await page.getByText('1 matching flights from ORD among 1 loaded flights.', { exact: false }).waitFor()
+  await page.getByRole('button', { name: 'Clear filters', exact: true }).click()
+  assert.equal(await page.getByLabel('Source airport', { exact: true }).inputValue(), '')
+  await page.getByLabel('Source airport', { exact: true }).fill('XYZ')
+  await page.getByRole('option', { name: /XYZ.*Search this airport code/ }).waitFor()
+  await page.getByLabel('Source airport', { exact: true }).press('Enter')
+  await page.getByText('No flights from XYZ in the loaded results.', { exact: false }).waitFor()
+  await page.getByLabel('Source airport', { exact: true }).fill('ORD')
+  await page.getByLabel('Source airport', { exact: true }).press('Escape')
+  assert.equal(await page.getByLabel('Source airport', { exact: true }).getAttribute('aria-expanded'), 'false')
+  await page.getByLabel('Destination airport', { exact: true }).fill('Atlanta')
+  await page.getByLabel('Destination airport', { exact: true }).press('ArrowDown')
+  await page.getByLabel('Destination airport', { exact: true }).press('Enter')
+  await page.waitForFunction(() => [...document.querySelectorAll('button')].some(button => button.textContent.includes('Run negotiation') && !button.disabled))
+  assert.ok(requests.some(item => item.path === '/api/scenarios'))
+  await page.getByLabel('Source airport', { exact: true }).click()
+  await page.locator('.airport-popover').screenshot({ path: join(tmpdir(), 'vector-airport-menu.png') })
+  await page.getByLabel('Source airport', { exact: true }).press('Escape')
   await page.getByRole('button', { name: /Run negotiation/ }).click()
   await page.getByRole('heading', { name: 'Recommended decision' }).waitFor()
   await page.getByRole('heading', { name: 'Negotiation timeline' }).waitFor()
