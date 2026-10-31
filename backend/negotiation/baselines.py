@@ -1,46 +1,40 @@
-"""Evaluation baselines using the same public grid and full-truth referee."""
+"""Evaluation baselines: solver-only (public data), negotiated, oracle (all data), and what happened in 2015."""
 from __future__ import annotations
-from .schemas import PlanEvaluation
-from .solver import generate_options
-from . import rules
 
-def _evaluation(label, option, world):
-    checks=[] if option is None else rules.check_option(world, option)
-    failed=[c.rule_id for c in checks if c.hard and not c.passed]
-    if option is None:
+from .rules import check_option
+from .schemas import Decision, Option, PlanEvaluation, World
+from .solver import all_candidates, generate_options
+
+
+def evaluate(world: World, label: str, o: Option | None, note: str) -> PlanEvaluation:
+    """Full-truth outcome of a plan. If the gate is still busy, the aircraft waits for it (delay counted)."""
+    if o is None:
         return PlanEvaluation(label=label, option=None, feasible_in_reality=None, failed_rules=[],
-                              arrival_delay_min=None, next_leg_delay_min=None,
-                              connection_pax_missed=None, note="No plan available")
-    public=world.public
-    arrival_delay=option.in_gate_time-public.flight.scheduled_arrival
-    next_delay=None
-    if public.next_leg is not None and option.next_leg_departure is not None:
-        next_delay=max(0, option.next_leg_departure-public.next_leg.scheduled_departure)
-    missed=0
-    for connection in world.private.pilot.connections:
-        if option.in_gate_time+connection.min_connect_min > connection.departure:
-            missed += connection.pax
-    return PlanEvaluation(label=label, option=option, feasible_in_reality=not failed,
-                          failed_rules=failed, arrival_delay_min=arrival_delay,
-                          next_leg_delay_min=next_delay, connection_pax_missed=missed,
-                          note="Full-truth hard-rule evaluation")
+                              arrival_delay_min=None, next_leg_delay_min=None, connection_pax_missed=None, note=note)
+    pub = world.public
+    failed = [c.rule_id for c in check_option(world, o) if c.hard and not c.passed]
+    in_gate = max(o.in_gate_time, world.private.ground.gate_busy_until.get(o.gate, 0))
+    ac = pub.aircraft
+    turn = ac.expedited_turnaround_min if o.turnaround == "EXPEDITED" else ac.standard_turnaround_min
+    nl = max(0, in_gate + turn - pub.next_leg.scheduled_departure) if pub.next_leg else None
+    missed = sum(c.pax for c in world.private.pilot.connections if in_gate + c.min_connect_min > c.departure)
+    return PlanEvaluation(label=label, option=o, feasible_in_reality=not failed, failed_rules=failed,
+                          arrival_delay_min=max(0, in_gate - pub.flight.scheduled_arrival), next_leg_delay_min=nl,
+                          connection_pax_missed=missed, note=note)
 
-def compare(world, negotiated):
-    public=world.public
-    solver_opts=generate_options(public, [], 1)
-    solver=solver_opts[0] if solver_opts else None
-    # Oracle uses the same grid, but filters each public candidate with all truth.
-    oracle=None
-    for t in range(public.eta_earliest, public.eta_earliest+61, 2):
-      for rw in public.runways:
-       for gate in public.gates:
-        for turn in ("STANDARD","EXPEDITED"):
-         from .solver import make_option
-         o=make_option(public,t,rw.name,gate,turn,option_id="O",source="SOLVER",round=1)
-         if not [c for c in rules.check_option(world,o) if c.hard and not c.passed]:
-          if oracle is None or o.public_cost < oracle.public_cost: oracle=o
-    historical=PlanEvaluation(label="HISTORICAL", option=None, feasible_in_reality=None,
-                              failed_rules=[], arrival_delay_min=world.public.flight.arrival_delay,
-                              next_leg_delay_min=None, connection_pax_missed=None,
-                              note="Historical CSV outcome; no revised plan")
-    return [_evaluation("SOLVER_ONLY",solver,world), _evaluation("NEGOTIATED",negotiated.option,world), _evaluation("ORACLE",oracle,world), historical]
+
+def compare(world: World, negotiated: Decision) -> list[PlanEvaluation]:
+    pub = world.public
+    solo = generate_options(pub, [], 1, [], 0, "S")
+    feasible = [o for o in all_candidates(pub) if all(c.passed for c in check_option(world, o) if c.hard)]
+    oracle = min(feasible, key=lambda o: (o.public_cost, o.landing_time), default=None)
+    f, nl = pub.flight, pub.next_leg
+    return [
+        evaluate(world, "SOLVER_ONLY", solo[0] if solo else None, "Solver with public data only, fixed weights."),
+        evaluate(world, "NEGOTIATED", negotiated.option, f"Outcome: {negotiated.outcome}."),
+        evaluate(world, "ORACLE", oracle, "Solver that sees all private data (upper bound), fixed weights."),
+        PlanEvaluation(label="HISTORICAL", option=None, feasible_in_reality=None, failed_rules=[],
+                       arrival_delay_min=f.arrival_delay, next_leg_delay_min=nl.departure_delay if nl else None,
+                       connection_pax_missed=None,
+                       note="What actually happened in 2015 (real weather, not our injected event): indicative only."),
+    ]

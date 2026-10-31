@@ -51,8 +51,7 @@ class Deps:
 
 # Pinned to devkit in "auto" mode until the real module passes `python -m scripts.check_deps --real`.
 # Remove a name from this set to switch that function to the real module.
-PINNED_TO_DEVKIT = {"generate_options", "make_option", "check_option", "verify_veto", "derive_shared_constraint",
-                    "decide", "compare"}
+PINNED_TO_DEVKIT: set[str] = set()
 
 
 def load_deps(mode: str | None = None) -> Deps:
