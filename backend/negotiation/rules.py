@@ -22,7 +22,7 @@ def _checks(public: PublicState, option: Option, *, private=None, shared=(), ful
     gaps = [q for q in public.arrival_queue if q.runway == option.runway and q.landing_time <= option.landing_time]
     sep = all(option.landing_time - q.landing_time >= _wake_gap(q.wake, public.aircraft.wake) for q in gaps)
     out.append(_check("WAKE_SEPARATION", sep, "wake separation satisfied" if sep else "insufficient wake separation", False))
-    min_turn = public.aircraft.min_turnaround_min if option.turnaround == "STANDARD" else public.aircraft.expedited_turnaround_min
+    min_turn = public.aircraft.standard_turnaround_min if option.turnaround == "STANDARD" else public.aircraft.expedited_turnaround_min
     turn_ok = option.next_leg_departure is None or option.next_leg_departure >= option.in_gate_time + min_turn
     out.append(_check("MIN_TURNAROUND", turn_ok, f"turnaround requires {min_turn} min", False))
     if full and private:
@@ -42,10 +42,6 @@ def _checks(public: PublicState, option: Option, *, private=None, shared=(), ful
         elif constraint.kind == "NO_EXPEDITED": ok = option.turnaround != "EXPEDITED"
         out.append(_check(constraint.from_rule, ok, constraint.statement, False))
     return out
-
-
-def public_world_gate(private, gate):
-    return 0
 
 
 def check_option(world: World, option: Option) -> list[RuleCheck]:
