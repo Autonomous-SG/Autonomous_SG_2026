@@ -44,7 +44,7 @@
       "aircraft": {
         "type": "MD-88",
         "wake": "MEDIUM",
-        "min_turnaround_min": 55,
+        "standard_turnaround_min": 55,
         "expedited_turnaround_min": 45
       },
       "event": {

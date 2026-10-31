@@ -62,7 +62,7 @@ def render_view(v: AgentView) -> str:
         f"Runways: {rwys}.\nArrival queue:\n{queue or '  (none)'}\n"
         f"Earliest possible landing: {to_hhmm(p.eta_earliest)}. Taxi-in {p.taxi_in_min} min.\n"
         f"Planned gate: {p.planned_gate}. Assignable gates: {', '.join(p.gates)}.\n"
-        f"Turnaround: standard {ac.min_turnaround_min} min, expedited {ac.expedited_turnaround_min} min.\n"
+        f"Turnaround: standard {ac.standard_turnaround_min} min, expedited {ac.expedited_turnaround_min} min.\n"
         f"This aircraft's next leg: {nxt}."
     )
     opts = "\n".join(

@@ -88,6 +88,8 @@ Committed in the repo (`git pull`). **Use `backend/negotiation/constraints.py`**
 **P1 (Jasmitha):** gates = planned gate + `spare_gates` spares; runways from `active_runways` (closure removes one); arrival queue density from `max_runway_ops_per_hour`; aircraft turnaround from `turnarounds(dest)`; fuel: final reserve 30 min × burn, spare fuel default 45 min (vary per scenario only as a stated assumption); ground shifts 8 h.
 **P2 (Deepa):** wake separation via `wake_sep_min` (not 2/3 min); `MIN_TURNAROUND` floor = workbook minimum; `FUEL_RESERVE` = never below 30-min final reserve; `GATE_CONFLICT` also fails if gate ≠ planned and `in_gate_time − now < 20`; `decide` returns FALLBACK (not NO_FEASIBLE) when there's no agreement but `fallback` is given, NO_FEASIBLE only when `fallback is None`. See devkit for reference.
 
+**Schema change (13:35):** `Aircraft.min_turnaround_min` → **`Aircraft.standard_turnaround_min`** (it never meant the workbook minimum). Fill both with `constraints.turnarounds(dest)` → `(standard, expedited)`.
+
 ### Stated assumptions (put on a demo slide)
 1. Workbook values are synthetic planning limits from the organisers; flights, delays, tail numbers and next legs are real (DOT 2015).
 2. Disruption events, arrival-queue times, gate occupancy, crew rosters, equipment, fuel on board and passenger connections are synthetic, seeded per scenario, and labelled in the UI.
@@ -108,7 +110,7 @@ Committed in the repo (`git pull`). **Use `backend/negotiation/constraints.py`**
 | `FUEL_RESERVE` | PILOT | hard | `hold_min ≤ (fuel_at_eta_kg − min_landing_fuel_kg) / hold_burn_kg_per_min` |
 | `PAX_CONNECTION` | PILOT | soft | margin = `departure − (in_gate_time + min_connect_min)`; < 0 → pax missed |
 | `NEXT_LEG_DELAY` | PILOT | soft | `next_leg_departure − next_leg.scheduled_departure` |
-| `MIN_TURNAROUND` | GROUND | hard | STANDARD = `min_turnaround_min`, EXPEDITED = `expedited_turnaround_min` |
+| `MIN_TURNAROUND` | GROUND | hard | STANDARD = `Aircraft.standard_turnaround_min`, EXPEDITED = `Aircraft.expedited_turnaround_min` (= workbook minimum, the floor) |
 | `GATE_CONFLICT` | GROUND | hard | `in_gate_time ≥ gate_busy_until[gate]`, and if gate ≠ planned: `in_gate_time − now ≥ 20` (workbook gate-change notice) |
 | `CREW_DUTY_LIMIT` | GROUND | hard | team covering the gate: turnaround must end ≤ `shift_end` unless `overtime_allowed` |
 | `EQUIPMENT_AVAILABLE` | GROUND | hard | ≥ 1 TUG available at `next_leg_departure` |

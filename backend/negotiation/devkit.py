@@ -35,7 +35,7 @@ def dl912_world(seed: int = 42, attack: str = "NONE") -> World:
         now=from_csv(1655),
         flight=flight,
         next_leg=next_leg,
-        aircraft=Aircraft(type="MD-88", wake="MEDIUM", min_turnaround_min=C.turnarounds("ATL")[0],
+        aircraft=Aircraft(type="MD-88", wake="MEDIUM", standard_turnaround_min=C.turnarounds("ATL")[0],
                           expedited_turnaround_min=C.turnarounds("ATL")[1]),
         event=DisruptionEvent(
             type="RUNWAY_CLOSURE", description="Runway 27L closed: disabled aircraft on runway, tow requested",
@@ -152,7 +152,7 @@ def _wake_check(public: PublicState, o: Option) -> RuleCheck:
 
 
 def _turn_check(public: PublicState, o: Option) -> RuleCheck:
-    need = public.aircraft.expedited_turnaround_min if o.turnaround == "EXPEDITED" else public.aircraft.min_turnaround_min
+    need = public.aircraft.expedited_turnaround_min if o.turnaround == "EXPEDITED" else public.aircraft.standard_turnaround_min
     have = (o.next_leg_departure or o.in_gate_time + need) - o.in_gate_time
     return _check("MIN_TURNAROUND", have >= need, f"{have} min turnaround, need {need}", False)
 
@@ -246,7 +246,7 @@ def derive_shared_constraint(world: World, agent: AgentName, rule_id: str, o: Op
 
 def make_option(public: PublicState, landing_time: int, runway: str, gate: str, turnaround: str, *,
                 option_id: str, source: str = "SOLVER", proposed_by: AgentName | None = None, round: int = 1) -> Option:
-    turn = public.aircraft.expedited_turnaround_min if turnaround == "EXPEDITED" else public.aircraft.min_turnaround_min
+    turn = public.aircraft.expedited_turnaround_min if turnaround == "EXPEDITED" else public.aircraft.standard_turnaround_min
     in_gate = landing_time + public.taxi_in_min
     nxt = in_gate + turn if public.next_leg else None
     hold = max(0, landing_time - public.eta_earliest)
@@ -352,7 +352,7 @@ def _evaluate(world: World, label: str, o: Option | None, note: str) -> PlanEval
     pub = world.public
     failed = [c.rule_id for c in check_option(world, o) if c.hard and not c.passed]
     in_gate = max(o.in_gate_time, world.private.ground.gate_busy_until.get(o.gate, 0))
-    turn = pub.aircraft.expedited_turnaround_min if o.turnaround == "EXPEDITED" else pub.aircraft.min_turnaround_min
+    turn = pub.aircraft.expedited_turnaround_min if o.turnaround == "EXPEDITED" else pub.aircraft.standard_turnaround_min
     nl = max(0, in_gate + turn - pub.next_leg.scheduled_departure) if pub.next_leg else None
     missed = sum(c.pax for c in world.private.pilot.connections if in_gate + c.min_connect_min > c.departure)
     return PlanEvaluation(label=label, option=o, feasible_in_reality=not failed, failed_rules=failed,

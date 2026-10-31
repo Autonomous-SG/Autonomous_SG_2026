@@ -84,8 +84,8 @@ class FlightRecord(Strict):
 class Aircraft(Strict):
     type: str
     wake: WakeCategory
-    min_turnaround_min: int
-    expedited_turnaround_min: int
+    standard_turnaround_min: int  # constraints.turnarounds(dest)[0] = workbook minimum + 10
+    expedited_turnaround_min: int  # constraints.turnarounds(dest)[1] = workbook min_turnaround_min (the floor)
 
 
 class Runway(Strict):
@@ -148,7 +148,7 @@ class AtcPrivate(Strict):
 class PilotPrivate(Strict):
     notes: str
     fuel_at_eta_kg: int  # fuel on board if landing at eta_earliest
-    min_landing_fuel_kg: int  # diversion fuel + final reserve
+    min_landing_fuel_kg: int  # 30-min final reserve = constraints.FINAL_RESERVE_MIN x hold burn; never plan below
     hold_burn_kg_per_min: int
     connections: list[Connection]
 
