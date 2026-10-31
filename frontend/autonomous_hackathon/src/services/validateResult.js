@@ -56,7 +56,7 @@ export function validateResult(data) {
       fields(world.public, `${path}.public`, {
         now: number, flight, next_leg: nullable(flight), eta_earliest: number, planned_gate: text,
         gates: texts, synthetic_fields: texts,
-        aircraft: (value, path) => fields(value, path, { type: text, wake: text, min_turnaround_min: number, expedited_turnaround_min: number }),
+        aircraft: (value, path) => fields(value, path, { type: text, wake: text, standard_turnaround_min: number, expedited_turnaround_min: number }),
         event: (value, path) => fields(value, path, { type: text, description: text, start: number, end_estimate: nullable(number) }),
         runways: (value, path) => list(value, path, (value, path) => fields(value, path, { name: text, open: bool, reopen_estimate: nullable(number) })),
         arrival_queue: (value, path) => list(value, path, (value, path) => fields(value, path, { flight: text, landing_time: number, runway: text, wake: text, real: bool })),

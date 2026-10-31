@@ -35,7 +35,7 @@ export function buildDemoResult(entry, event, attack, seed = 42) {
 
   function option(id, gate, delay = 4, expedited = false, round = 1) {
     const inGate = state.eta_earliest + delay + state.taxi_in_min
-    const departure = state.next_leg ? inGate + (expedited ? state.aircraft.expedited_turnaround_min : state.aircraft.min_turnaround_min) : null
+    const departure = state.next_leg ? inGate + (expedited ? state.aircraft.expedited_turnaround_min : state.aircraft.standard_turnaround_min) : null
     const breakdown = {
       arrival_delay: inGate - state.flight.scheduled_arrival, hold: 0.5 * delay,
       gate_change: gate === planned ? 0 : 10, expedited: expedited ? 8 : 0,

@@ -17,7 +17,7 @@ export const referenceWorld = {
       arrival_delay: null, departure_delay: 85, weather_delay: 0,
       late_aircraft_delay: 0, distance: 164, taxi_in: null,
     },
-    aircraft: { type: 'Reference aircraft', wake: 'MEDIUM', min_turnaround_min: 40, expedited_turnaround_min: 30 },
+    aircraft: { type: 'Reference aircraft', wake: 'MEDIUM', standard_turnaround_min: 40, expedited_turnaround_min: 30 },
     event: { type: 'RUNWAY_CLOSURE', description: 'Arrivals must be reassigned while runway 27L is unavailable. Coordinate a revised landing, gate and turnaround.', start: 1010, runway: '27L', gate: null, end_estimate: 1070 },
     runways: [{ name: '27L', open: false, reopen_estimate: 1070 }, { name: '26R', open: true, reopen_estimate: null }],
     arrival_queue: [], eta_earliest: 1040, taxi_in_min: 9,
