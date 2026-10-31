@@ -60,7 +60,7 @@ Agents receive only the **`notes` string** of their private slice (messy free te
 
 ## 4. Negotiation protocol
 
-**Round 1** — solver gives options A–C (public data). Each agent, in parallel, returns one `OptionAssessment` per option: `ACCEPT` with a score 0–10, or `VETO` citing a **hard rule in its own domain**. No counters yet.
+**Round 1** — solver gives options A–C (public data). Each agent, in parallel, returns one `OptionAssessment` per option: `ACCEPT` with a score 0–10, or `VETO` citing a **hard rule in its own domain**, plus at most **one** `CounterProposal` (counters allowed in rounds 1 and 2, not in the final round).
 → Checker verifies each veto against private truth. Confirmed → option eliminated and a `SharedConstraint` (no private detail, e.g. "Gate A17 unavailable before 17:55") is published. Unconfirmed → veto ignored, flagged `VETO_UNVERIFIED`.
 
 **Round 2** — options = survivors + new solver options using shared constraints. Agents assess again, see peers' Round-1 assessments (structured fields only; peer `reason` wrapped in `<peer_message>` as untrusted data), and may submit **one** `CounterProposal`. Counters are built with `solver.make_option` and fully rule-checked; passing ones join the list.
@@ -71,7 +71,7 @@ Agents receive only the **`notes` string** of their private slice (messy free te
 
 **Decision rule (code, `decision.decide`)**
 1. Drop options with a confirmed veto in the final round (or earlier).
-2. For each survivor, `min_score` = lowest score across the 3 agents. Pick the highest `min_score` (protects the worst-off party). Tie → lower `public_cost` → earlier landing.
+2. For each survivor, `min_score` = lowest score across the 3 agents. Pick the highest `min_score` (protects the worst-off party). Tie → higher total score → lower `public_cost` → earlier landing.
 3. Outcome:
    - `CONSENSUS` — a survivor exists and all 3 agents returned valid output.
    - `FALLBACK` — some agent failed (timeout / invalid output / refusal); pick solver's best option that passes all *known* hard rules + shared constraints. Clearly labelled.

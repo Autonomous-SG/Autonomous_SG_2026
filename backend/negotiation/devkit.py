@@ -309,7 +309,8 @@ def decide(options: list[Option], turns_by_round: list[list[AgentTurn]], rounds_
                         explanation=f"Agents unavailable or invalid ({', '.join(failed) or 'none'}); deterministic "
                                     f"solver choice under known constraints. Human must confirm.",
                         party_messages=_messages(fallback))
-    ranked = sorted(options, key=lambda o: (-min(scores[o.option_id] or [0]), o.public_cost, o.landing_time))
+    ranked = sorted(options, key=lambda o: (-min(scores[o.option_id] or [0]), -sum(scores[o.option_id]),
+                                            o.public_cost, o.landing_time))
     best = ranked[0]
     ms = min(scores[best.option_id] or [0])
     return Decision(outcome="CONSENSUS", option=best, min_score=ms, rounds_used=rounds_used,
