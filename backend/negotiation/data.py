@@ -169,7 +169,11 @@ def _date_series(df: pd.DataFrame) -> pd.Series:
     cached = _DERIVED_SERIES.get(cache_key)
     if cached is not None and cached.index.equals(df.index):
         return cached
-    values = pd.Series([_date(row) for _, row in df.iterrows()], index=df.index)
+    if {"YEAR", "MONTH", "DAY"} <= set(df.columns) and not ({"DATE", "date"} & set(df.columns)):
+        parts = df[["YEAR", "MONTH", "DAY"]].rename(columns=str.lower)
+        values = pd.to_datetime(parts, errors="coerce").dt.strftime("%Y-%m-%d").fillna("")
+    else:
+        values = pd.Series([_date(row) for _, row in df.iterrows()], index=df.index)
     _DERIVED_SERIES[cache_key] = values
     return values
 
@@ -179,11 +183,15 @@ def _time_series(df: pd.DataFrame, column: str) -> pd.Series:
     cached = _DERIVED_SERIES.get(cache_key)
     if isinstance(cached, pd.Series) and cached.index.equals(df.index):
         return cached
-    values: list[int] = []
-    for value in df[column]:
-        minute = _minute(value, optional=True)
-        values.append(minute if minute is not None else -1)
-    result = pd.Series(values, index=df.index)
+    numeric = pd.to_numeric(df[column], errors="coerce")
+    if numeric.notna().sum() == df[column].notna().sum():  # plain HHMM numbers: vectorised
+        result = ((numeric // 100) * 60 + numeric % 100).fillna(-1).astype(int)
+    else:
+        values: list[int] = []
+        for value in df[column]:
+            minute = _minute(value, optional=True)
+            values.append(minute if minute is not None else -1)
+        result = pd.Series(values, index=df.index)
     _DERIVED_SERIES[cache_key] = result
     return result
 
@@ -234,8 +242,17 @@ def list_scenarios(
     df = load_flights()
     airport_key = airport.upper().strip() if airport else None
     date_key = _date_key(date) if date else None
+    # Narrow with column-wise masks first; only the matching rows are turned into records below.
+    dest_col = next((n for n in ("DESTINATION_AIRPORT", "DESTINATION", "destination") if n in df.columns), None)
+    mask = pd.Series(True, index=df.index)
+    if airport_key and dest_col:
+        mask &= df[dest_col].fillna("").astype(str).str.upper().str.strip().eq(airport_key)
+    if date_key:
+        mask &= _date_series(df).eq(date_key)
+    positions = {index: position for position, index in enumerate(df.index)} if not mask.all() else None
     scenarios: list[ScenarioSummary] = []
-    for position, (index, row) in enumerate(df.iterrows()):
+    for index, row in df.loc[mask].iterrows():
+        position = positions[index] if positions is not None else index
         row_id = _row_id(index, position)
         flight = flight_from_row(row, row_id)
         # The disruption airport is the destination: the world being built is
