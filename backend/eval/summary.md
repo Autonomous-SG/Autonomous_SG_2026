@@ -50,3 +50,15 @@ False vetoes rejected by the checker in LYING_AGENT runs: 4.
 - row 112563 MQ3698 DFW->SGF RUNWAY_CLOSURE: NO_FEASIBLE, safety gate caught 4 option(s) the agents accepted
 - row 19658 MQ3165 ORD->MQT WEATHER_CAPACITY_DROP: CONSENSUS, safety gate caught 2 option(s) the agents accepted
 - row 30990 MQ2983 DFW->AMA WEATHER_CAPACITY_DROP: NO_FEASIBLE, safety gate caught 5 option(s) the agents accepted
+
+## Naive single-prompt baseline (what the challenge says to avoid)
+
+One Claude call (same model, same effort) plays ATC, airline and ground at once, sees ALL private notes, is told every safety rule, and returns one plan. Same 24 scenarios as above; plans checked by the same referee.
+
+| | Plans that break a hard rule in reality | Invalid output | Mean arrival delay (min) | Mean next-leg delay (min) | Connecting pax missed |
+|---|---|---|---|---|---|
+| NAIVE single prompt | **33%** (8/24) | 0 | 30.4 | 27.0 | 35 |
+| Vector (multi-agent + checker) | 0 unsafe recommendations | 0 | see above | see above | see above |
+
+Rules the naive plans broke: RUNWAY_OPEN x5, GATE_CONFLICT x3.
+Cost per naive call (mean): $0.009.

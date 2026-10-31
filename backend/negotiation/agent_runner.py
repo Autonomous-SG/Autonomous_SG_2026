@@ -41,9 +41,8 @@ def _clean(text: str) -> str:
     return text.replace("<", "(").replace(">", ")")
 
 
-def render_view(v: AgentView) -> str:
-    p, f = v.public, v.public.flight
-    ac = p.aircraft
+def render_public(p) -> str:
+    f, ac = p.flight, p.aircraft
     rwys = "; ".join(
         f"{r.name} open" if r.open else
         f"{r.name} CLOSED" + (f", estimated reopen {to_hhmm(r.reopen_estimate)}" if r.reopen_estimate else "")
@@ -53,7 +52,7 @@ def render_view(v: AgentView) -> str:
     nxt = (f"{p.next_leg.airline}{p.next_leg.flight_number} to {p.next_leg.destination}, scheduled off-block "
            f"{to_hhmm(p.next_leg.scheduled_departure)}") if p.next_leg else "none today"
     ev = p.event
-    public = (
+    return (
         f"Time now: {to_hhmm(p.now)} local.\n"
         f"Flight: {f.airline}{f.flight_number} {f.origin}->{f.destination}, aircraft {f.tail_number} {ac.type} "
         f"(wake {ac.wake}), scheduled in-gate {to_hhmm(f.scheduled_arrival)}.\n"
@@ -65,13 +64,21 @@ def render_view(v: AgentView) -> str:
         f"Turnaround: standard {ac.standard_turnaround_min} min, expedited {ac.expedited_turnaround_min} min.\n"
         f"This aircraft's next leg: {nxt}."
     )
-    opts = "\n".join(
+
+
+def render_options(options) -> str:
+    return "\n".join(
         f"  - {o.option_id}: land {to_hhmm(o.landing_time)} on {o.runway}, gate {o.gate}, {o.turnaround} turnaround, "
         f"hold {o.hold_min} min, in-gate {to_hhmm(o.in_gate_time)}"
         + (f", next leg off-block {to_hhmm(o.next_leg_departure)}" if o.next_leg_departure else "")
         + (f" [counter-proposal by {o.proposed_by}]" if o.source == "COUNTER" else "")
-        for o in v.options
+        for o in options
     )
+
+
+def render_view(v: AgentView) -> str:
+    public = render_public(v.public)
+    opts = render_options(v.options)
     shared = "\n".join(f"  - {c.statement} (from {c.from_agent}, round {c.round})" for c in v.shared_constraints)
     peers = "\n".join(
         f'<peer_message agent="{a.agent}" round="{a.round}">option {a.option_id}: {a.verdict}'
