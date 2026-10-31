@@ -9,7 +9,6 @@ export default function ScenarioPicker({ busy, onRun }) {
   const [selectedId, setSelectedId] = useState('')
   const [event, setEvent] = useState('RUNWAY_CLOSURE')
   const [attack, setAttack] = useState('NONE')
-  const [seed, setSeed] = useState('42')
   const [retry, setRetry] = useState(0)
   const [remote, setRemote] = useState({ key: '', status: 'idle', rows: [], error: '' })
   const queryKey = JSON.stringify([airport, date, retry])
@@ -36,7 +35,7 @@ export default function ScenarioPicker({ busy, onRun }) {
   function submit(e) {
     e.preventDefault()
     if (!selected || busy || !ready) return
-    onRun({ row_id: selected.row_id, event, attack, seed: Number(seed) })
+    onRun({ row_id: selected.row_id, event, attack, seed: 42 })
   }
 
   return <section className="panel scenario-picker" aria-labelledby="scenario-title">
@@ -54,7 +53,6 @@ export default function ScenarioPicker({ busy, onRun }) {
             {!matches.length && <option value="">{failed ? 'Flights unavailable' : ready ? 'No matching flights' : 'Loading flights…'}</option>}
             {matches.map(row => <option key={row.id} value={row.id}>{row.flight} · {row.origin} → {row.destination} · {row.date} · {formatMinute(row.scheduled_arrival)}</option>)}
           </select></label>
-          <label className="seed-input">Seed<input type="number" required step="1" min="0" max="2147483647" value={seed} onChange={e => setSeed(e.target.value)} /></label>
           <button className="run-button" type="submit" disabled={!selected || !ready || busy}>{busy ? 'Running…' : 'Run negotiation'} <span aria-hidden="true">↗</span></button>
         </div>
         <div className="picker-footer"><p className="field-hint" role="status">{failed ? 'Unable to load flights. Check the connection and retry.' : ready ? matches.length ? `${matches.length} matching flights (up to 50 per search). Run to load the selected scenario.` : 'No flights match. Change the filters or clear them.' : 'Fetching flights from the backend. The first load can take up to two minutes…'}</p><button type="button" className="text-button" onClick={() => { setAirport(''); setDate(''); setSelectedId('') }}>Clear filters</button></div>

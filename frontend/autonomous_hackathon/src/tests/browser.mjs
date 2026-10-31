@@ -30,6 +30,7 @@ try {
   await page.goto(process.env.VECTOR_BASE_URL ?? 'http://localhost:5173')
   await page.getByText('API 503:', { exact: false }).waitFor()
   assert.equal(await page.getByRole('button', { name: 'Demo', exact: true }).count(), 0)
+  assert.equal(await page.getByLabel('Seed', { exact: true }).count(), 0)
   assert.equal(await page.getByRole('button', { name: 'Live backend', exact: true }).count(), 0)
   assert.equal(await page.getByText('Loading flights…', { exact: true }).count(), 0)
   await page.getByText('Flights unavailable', { exact: true }).waitFor({ state: 'attached' })
@@ -53,6 +54,8 @@ try {
   await page.getByText('Recommendation rejected · Saved by backend', { exact: true }).waitFor()
   assert.equal(requests.findLast(item => item.path === '/api/decision').body.approve, false)
   assert.equal(requests.find(item => item.path === '/api/negotiate').body.row_id, 20919)
+  assert.equal(requests.find(item => item.path === '/api/negotiate').body.seed, 42)
+  assert.doesNotMatch(await page.locator('.page-footer').innerText(), /seed/i)
   for (const width of [320, 390, 768]) {
     await page.setViewportSize({ width, height: 900 })
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, `No page overflow at ${width}px`)

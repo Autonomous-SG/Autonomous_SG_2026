@@ -112,7 +112,7 @@ function App() {
         <EvidencePanels result={result} source={active.source} />
       </div>}
       {!result && !busy && <section className="panel welcome-panel"><span className="eyebrow">READY WHEN YOU ARE</span><h2>Select a flight to begin.</h2><p>Choose an airport and date, then run a scenario from the connected backend.</p></section>}
-      <footer className="page-footer"><span><span className="status-dot" /> Human approval required for every recommendation</span><span>{result ? `${active.source.toUpperCase()} · SEED ${result.world.seed}` : 'OPERATIONS CONTROL'}</span></footer>
+      <footer className="page-footer"><span><span className="status-dot" /> Human approval required for every recommendation</span><span>{result ? `${active.source.toUpperCase()} RESULT` : 'OPERATIONS CONTROL'}</span></footer>
     </main>
   </>
 }
