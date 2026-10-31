@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import Badge from './Badge'
-import { airports, attacks, events } from '../mocks/scenarios'
+import { airports, attacks, events } from '../utils/scenarioOptions'
 import { formatMinute } from '../utils/time'
 import { isSynthetic } from '../utils/presentation'
 

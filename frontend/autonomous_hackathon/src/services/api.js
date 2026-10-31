@@ -1,7 +1,8 @@
 import { validateResult } from './validateResult.js'
 export { validateResult } from './validateResult.js'
 
-async function request(path, { signal, timeout = 15000, ...options } = {}) {
+// The first scenario request may load and index the full flight CSV.
+async function request(path, { signal, timeout = 120000, ...options } = {}) {
   const controller = new AbortController()
   const abort = () => controller.abort()
   signal?.addEventListener('abort', abort, { once: true })
@@ -24,7 +25,7 @@ async function request(path, { signal, timeout = 15000, ...options } = {}) {
       if (signal?.aborted) throw error
       throw new Error('The API request timed out. Try again or check the backend.', { cause: error })
     }
-    if (error instanceof TypeError) throw new Error('Cannot reach the backend. Start it on port 8000, or use Demo mode.', { cause: error })
+    if (error instanceof TypeError) throw new Error('Cannot reach the backend. Check that it is running on port 8000, then retry.', { cause: error })
     throw error
   } finally {
     clearTimeout(timer)
