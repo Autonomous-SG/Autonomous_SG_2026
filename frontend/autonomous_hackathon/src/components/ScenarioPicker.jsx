@@ -43,7 +43,7 @@ export default function ScenarioPicker({ busy, onRun }) {
     <form onSubmit={submit}>
       <fieldset disabled={busy}>
         <div className="controls">
-          <label>Destination airport<input list="airport-options" placeholder="All airports" value={airport} maxLength={3} onChange={e => setAirport(e.target.value.toUpperCase().replace(/[^A-Z]/g, ''))} /><datalist id="airport-options">{['ATL', 'ORD', 'DFW'].map(code => <option key={code} value={code}>{airports[code]}</option>)}</datalist></label>
+          <label>Destination airport<input list="airport-options" placeholder="All airports" value={airport} maxLength={3} onChange={e => setAirport(e.target.value.toUpperCase().replace(/[^A-Z]/g, ''))} /><datalist id="airport-options">{Object.keys(airports).filter(code => code !== 'AVL').map(code =><option key={code} value={code}>{airports[code]}</option>)}</datalist></label>
           <label>Flight date<input type="date" value={date} onChange={e => setDate(e.target.value)} /></label>
           <label>Disruption<select value={event} onChange={e => setEvent(e.target.value)}>{events.map(item => <option key={item.value} value={item.value}>{item.label}</option>)}</select></label>
           <label>Test condition<select value={attack} onChange={e => setAttack(e.target.value)}>{attacks.map(item => <option key={item.value} value={item.value}>{item.label}</option>)}</select></label>
