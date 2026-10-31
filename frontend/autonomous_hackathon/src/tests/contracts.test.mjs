@@ -88,3 +88,41 @@ test('API failures and unconfirmed review saves are not presented as success', a
   globalThis.fetch = async () => { throw new TypeError('Connection refused') }
   await assert.rejects(negotiate({}), /Cannot reach the backend/)
 })
+
+test('scenario loading survives 15 seconds and times out only after two minutes', async context => {
+  context.mock.timers.enable({ apis: ['setTimeout'] })
+  let signal
+  let complete
+  globalThis.fetch = async (_url, options) => {
+    signal = options.signal
+    return new Promise((resolve, reject) => {
+      complete = resolve
+      signal.addEventListener('abort', () => reject(new DOMException('Aborted', 'AbortError')))
+    })
+  }
+  const loading = listScenarios({})
+  context.mock.timers.tick(15001)
+  assert.equal(signal.aborted, false)
+  complete(new Response(JSON.stringify([{ row_id: 20919, flight: 'DL912' }]), { status: 200 }))
+  await loading
+  const stalled = listScenarios({})
+  context.mock.timers.tick(119999)
+  assert.equal(signal.aborted, false)
+  context.mock.timers.tick(1)
+  await assert.rejects(stalled, /timed out/)
+})
+
+test('negotiations retain their longer timeout and support explicit cancellation', async context => {
+  context.mock.timers.enable({ apis: ['setTimeout'] })
+  let signal
+  globalThis.fetch = async (_url, options) => {
+    signal = options.signal
+    return new Promise((_resolve, reject) => signal.addEventListener('abort', () => reject(new DOMException('Aborted', 'AbortError'))))
+  }
+  const controller = new AbortController()
+  const running = negotiate({}, controller.signal)
+  context.mock.timers.tick(120001)
+  assert.equal(signal.aborted, false)
+  controller.abort()
+  await assert.rejects(running, { name: 'AbortError' })
+})
