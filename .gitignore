@@ -218,3 +218,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Datasets (download from the Challenge #2 Drive folder)
+data/

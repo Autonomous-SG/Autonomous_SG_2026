@@ -2,3 +2,6 @@ fastapi
 uvicorn
 anthropic
 python-dotenv
+pydantic
+pandas
+pytest
