@@ -202,9 +202,8 @@ def _notes_atc(event: DisruptionEvent, actual: int | None, reference: bool) -> s
     if reference:
         return (
             "TWR/APP NOTE 1650L: RWY 27L CLSD - disabled acft on rwy, tow requested. "
-            "Field est reopen ~1750L but tow crew says 'maybe 1800+'. West flow, 26R only "
-            "rwy for arrivals, 28 deps only. DL811 HVY seq 26R 1721L. Sector saturated, "
-            "AAR cut to 30/hr."
+            "Field est reopen ~1750L but tow crew says 'maybe 1800+'. West flow, arrivals on "
+            "26R/26L/27R. DL811 HVY seq 26R 1721L. Sector saturated, AAR cut to 30/hr."
         )
     if event.type == "GATE_EQUIPMENT_FAILURE":
         return f"TWR/APP {to_hhmm(event.start)}L: gate equipment issue reported at {event.gate}; runway flow normal."

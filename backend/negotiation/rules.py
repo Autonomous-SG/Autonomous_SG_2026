@@ -88,8 +88,9 @@ def check_option(world: World, o: Option) -> list[RuleCheck]:
     free_at = priv.ground.gate_busy_until.get(o.gate, 0)
     notice = o.in_gate_time - pub.now
     late_change = o.gate != pub.planned_gate and notice < C.GATE_CHANGE_NOTICE_MIN
+    busy = f"{o.gate} busy until {to_hhmm(free_at)}" if free_at else f"{o.gate} free"
     checks.append(_check("GATE_CONFLICT", o.in_gate_time >= free_at and not late_change,
-                         f"{o.gate} free at {to_hhmm(free_at)}, in-gate {to_hhmm(o.in_gate_time)}"
+                         f"{busy}, in-gate {to_hhmm(o.in_gate_time)}"
                          + (f"; gate change notice {notice} min < {C.GATE_CHANGE_NOTICE_MIN}" if late_change else ""),
                          True))
     team = next((t for t in priv.ground.crew if o.gate in t.gates), None)
