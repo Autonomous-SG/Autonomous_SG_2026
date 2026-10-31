@@ -271,38 +271,32 @@
               {
                 "option_id": "A",
                 "verdict": "ACCEPT",
-                "score": 5,
+                "score": 4,
                 "veto_rule": null,
                 "cited_rules": [
-                  "WAKE_SEPARATION",
-                  "SECTOR_THROUGHPUT",
-                  "RUNWAY_OPEN"
+                  "SECTOR_THROUGHPUT"
                 ],
-                "reason": "26R is open. 17:24 is 3 min behind HEAVY DL811 (17:21) and 2 min ahead of WN459 (17:26), so separation is legal but tight. Squeezing into the queue costs some throughput."
+                "reason": "Uses 26R only, not the unreliable 27L reopening. The 17:24 slot is squeezed between DL811 at 17:21 and WN459 at 17:26 with a 4 min hold, which lowers throughput."
               },
               {
                 "option_id": "B",
                 "verdict": "ACCEPT",
-                "score": 5,
+                "score": 4,
                 "veto_rule": null,
                 "cited_rules": [
-                  "WAKE_SEPARATION",
-                  "SECTOR_THROUGHPUT",
-                  "RUNWAY_OPEN"
+                  "SECTOR_THROUGHPUT"
                 ],
-                "reason": "Same 17:24 slot on open 26R: 3 min behind HEAVY DL811 and 2 min ahead of WN459. Legal but tight, with a modest throughput cost. The gate choice does not affect ATC."
+                "reason": "Same 17:24 slot on 26R, which does not depend on 27L reopening. It is squeezed between DL811 and WN459 and adds a hold, so the score is moderate. The gate does not affect ATC."
               },
               {
                 "option_id": "C",
                 "verdict": "ACCEPT",
-                "score": 5,
+                "score": 4,
                 "veto_rule": null,
                 "cited_rules": [
-                  "WAKE_SEPARATION",
-                  "SECTOR_THROUGHPUT",
-                  "RUNWAY_OPEN"
+                  "SECTOR_THROUGHPUT"
                 ],
-                "reason": "Same 17:24 slot on open 26R: 3 min behind HEAVY DL811 and 2 min ahead of WN459. Legal but tight, with a modest throughput cost. The gate choice does not affect ATC."
+                "reason": "Same 17:24 slot on 26R, independent of 27L reopening. The squeeze between 17:21 and 17:26 arrivals and the 4 min hold lower the score. The gate is not an ATC matter."
               }
             ],
             "counter_proposal": null
@@ -311,9 +305,9 @@
           "counter_option_id": null,
           "counter_checks": [],
           "guardrail_flags": [],
-          "latency_ms": 7309,
-          "input_tokens": 2931,
-          "output_tokens": 959
+          "latency_ms": 6195,
+          "input_tokens": 3015,
+          "output_tokens": 705
         },
         {
           "agent": "PILOT",
@@ -331,7 +325,7 @@
                   "PAX_CONNECTION",
                   "NEXT_LEG_DELAY"
                 ],
-                "reason": "Fuel allows 20 min hold ((4200-3300)/45), 4 min is fine. In-gate 17:33 gives 9 AMS pax time to make the 18:45 (MCT 60), but next leg leaves 18:13, 19 min late.}"
+                "reason": "Hold 4 min burns ~180kg vs 900kg spare (max 20 min), so fuel is fine. In-gate 17:33 leaves 12 min to DL72 1845L connection at 60 min MCT; next leg off 18:13 is 19 min late."
               },
               {
                 "option_id": "B",
@@ -343,7 +337,7 @@
                   "PAX_CONNECTION",
                   "NEXT_LEG_DELAY"
                 ],
-                "reason": "Hold of 4 min is within the 20 min fuel limit. In-gate 17:33 protects the AMS connection, but off-block 18:13 is 19 min late for DL2289.}"
+                "reason": "Hold 4 min is within the 20 min fuel allowance. Same 17:33 in-gate and 18:13 off-block, so the 9 AMS connections are at risk and the next leg is 19 min late."
               },
               {
                 "option_id": "C",
@@ -355,7 +349,7 @@
                   "PAX_CONNECTION",
                   "NEXT_LEG_DELAY"
                 ],
-                "reason": "Hold of 4 min is within the 20 min fuel limit. In-gate 17:33 protects the AMS connection, but off-block 18:13 is 19 min late for DL2289.}"
+                "reason": "Fuel allows 20 min hold, plan holds 4. In-gate 17:33 and off-block 18:13 are identical to the others, with the same connection risk and 19 min next-leg delay."
               }
             ],
             "counter_proposal": {
@@ -364,7 +358,7 @@
               "runway": "26R",
               "gate": "A17",
               "turnaround": "EXPEDITED",
-              "reason": "Expedited 30 min turnaround from 17:33 in-gate gives off-block 18:03, cutting the next leg delay to 9 min with same fuel-safe hold."
+              "reason": "Expedited 30 min turnaround from 17:33 in-gate gives 18:03 off-block, cutting next-leg delay to 9 min instead of 19, at no fuel cost."
             }
           },
           "veto_checks": [],
@@ -452,9 +446,9 @@
             }
           ],
           "guardrail_flags": [],
-          "latency_ms": 4480,
+          "latency_ms": 4722,
           "input_tokens": 3062,
-          "output_tokens": 593
+          "output_tokens": 607
         },
         {
           "agent": "GROUND",
@@ -468,19 +462,21 @@
                 "score": 0,
                 "veto_rule": "GATE_CONFLICT",
                 "cited_rules": [
-                  "GATE_CONFLICT"
+                  "GATE_CONFLICT",
+                  "CREW_DUTY_LIMIT"
                 ],
-                "reason": "A17 is occupied by a delayed outbound with estimated push 17:50-17:55, so it is not free by the 17:33 in-gate time."
+                "reason": "A17 is occupied by a delayed outbound with push est 17:50-17:55, so it is not free at the 17:33 in-gate time. Team 3 also ends 18:00, before the 18:13 off-block."
               },
               {
                 "option_id": "B",
                 "verdict": "VETO",
                 "score": 0,
-                "veto_rule": "GATE_CONFLICT",
+                "veto_rule": "CREW_DUTY_LIMIT",
                 "cited_rules": [
+                  "CREW_DUTY_LIMIT",
                   "GATE_CONFLICT"
                 ],
-                "reason": "A15 is occupied until about 17:40, so it is not free by the 17:33 in-gate time. Team 3 also ends its shift at 18:00 before the 18:13 off-block."
+                "reason": "A15 is free after ~17:40 but the in-gate is 17:33, so it is occupied. Team 3 shift ends 18:00, before the 18:13 off-block, and no overtime is authorised."
               },
               {
                 "option_id": "C",
@@ -491,7 +487,7 @@
                   "GATE_CONFLICT",
                   "CREW_DUTY_LIMIT"
                 ],
-                "reason": "A19 has a jetbridge fault with the technician ETA 18:30, so it is unusable at 17:33. Team 3 also ends at 18:00, before the 18:13 off-block."
+                "reason": "A19 has a jetbridge fault with tech ETA 18:30, so it is unusable at 17:33. Team 3 shift ends 18:00, before the 18:13 off-block."
               }
             ],
             "counter_proposal": {
@@ -500,7 +496,7 @@
               "runway": "26R",
               "gate": "A21",
               "turnaround": "STANDARD",
-              "reason": "A21 is open and covered by Team 4 until 22:00. Tug A-2 is available. In-gate 17:33 and a 40 min turnaround give 18:13 off-block, which is within crew limits."
+              "reason": "A21 is open and Team 4 is on until 22:00, covering the 18:13 off-block. Tug A-2 is available. Only the gate changes from the planned A17."
             }
           },
           "veto_checks": [
@@ -513,11 +509,11 @@
               "private": true
             },
             {
-              "rule_id": "GATE_CONFLICT",
+              "rule_id": "CREW_DUTY_LIMIT",
               "domain": "GROUND",
               "hard": true,
               "passed": false,
-              "detail": "A15 free at 17:40, in-gate 17:33",
+              "detail": "team 3 shift ends 18:00, turn ends 18:13",
               "private": true
             },
             {
@@ -613,9 +609,9 @@
             }
           ],
           "guardrail_flags": [],
-          "latency_ms": 4292,
+          "latency_ms": 4484,
           "input_tokens": 3088,
-          "output_tokens": 517
+          "output_tokens": 566
         }
       ],
       "new_shared_constraints": [
@@ -630,12 +626,12 @@
           "round": 1
         },
         {
-          "kind": "GATE_UNAVAILABLE",
-          "statement": "Gate A15 unavailable before 17:40",
-          "time": 1060,
+          "kind": "TURNAROUND_DEADLINE",
+          "statement": "Turnaround at A15 must finish by 18:00",
+          "time": 1080,
           "gate": "A15",
           "runway": null,
-          "from_rule": "GATE_CONFLICT",
+          "from_rule": "CREW_DUTY_LIMIT",
           "from_agent": "GROUND",
           "round": 1
         },
@@ -754,46 +750,50 @@
               {
                 "option_id": "E",
                 "verdict": "ACCEPT",
-                "score": 5,
+                "score": 6,
                 "veto_rule": null,
                 "cited_rules": [
-                  "WAKE_SEPARATION",
-                  "SECTOR_THROUGHPUT"
+                  "SECTOR_THROUGHPUT",
+                  "RUNWAY_OPEN",
+                  "WAKE_SEPARATION"
                 ],
-                "reason": "26R is open and 17:24 is 3 min behind HEAVY DL811 (17:21) and 2 min ahead of WN459 (17:26), so separation holds. It is a tight squeeze in a saturated sector.}"
+                "reason": "Lands 26R at 17:24 between DL811 17:21 and WN459 17:26; 26R is open, uses a small 4 min hold, and squeezes the sequence slightly in a saturated sector.0"
               },
               {
                 "option_id": "F",
                 "verdict": "ACCEPT",
-                "score": 5,
+                "score": 6,
                 "veto_rule": null,
                 "cited_rules": [
-                  "WAKE_SEPARATION",
-                  "SECTOR_THROUGHPUT"
+                  "SECTOR_THROUGHPUT",
+                  "RUNWAY_OPEN",
+                  "WAKE_SEPARATION"
                 ],
-                "reason": "Same 17:24 slot on open 26R, separation holds behind DL811 and ahead of WN459. Squeezing between arrivals costs some throughput score.}"
+                "reason": "Same 17:24 slot on open 26R as E; passes public checks, mild throughput cost from squeezing between queued arrivals."
               },
               {
                 "option_id": "G",
                 "verdict": "ACCEPT",
-                "score": 5,
+                "score": 6,
                 "veto_rule": null,
                 "cited_rules": [
-                  "WAKE_SEPARATION",
-                  "SECTOR_THROUGHPUT"
+                  "SECTOR_THROUGHPUT",
+                  "RUNWAY_OPEN",
+                  "WAKE_SEPARATION"
                 ],
-                "reason": "Landing slot is the same as E, 26R open and separation adequate. Gate and turnaround are not ATC matters. Tight squeeze lowers throughput score.}"
+                "reason": "Same 17:24 landing on open 26R; turnaround type does not affect ATC. Small throughput cost from the squeeze."
               },
               {
                 "option_id": "H",
                 "verdict": "ACCEPT",
-                "score": 4,
+                "score": 5,
                 "veto_rule": null,
                 "cited_rules": [
-                  "WAKE_SEPARATION",
-                  "SECTOR_THROUGHPUT"
+                  "SECTOR_THROUGHPUT",
+                  "RUNWAY_OPEN",
+                  "WAKE_SEPARATION"
                 ],
-                "reason": "17:30 on 26R sits 4 min after WN459 (17:26) and 3 min before DL1761 (17:33), so separation holds. A 10 min hold extends holding in a saturated sector.}"
+                "reason": "Lands 26R at 17:30 on an open runway, but a 10 min hold extends holding in a saturated sector with AAR cut to 30/hr."
               }
             ],
             "counter_proposal": null
@@ -802,9 +802,9 @@
           "counter_option_id": null,
           "counter_checks": [],
           "guardrail_flags": [],
-          "latency_ms": 7963,
-          "input_tokens": 3707,
-          "output_tokens": 1016
+          "latency_ms": 3860,
+          "input_tokens": 3833,
+          "output_tokens": 576
         },
         {
           "agent": "PILOT",
@@ -815,26 +815,26 @@
               {
                 "option_id": "E",
                 "verdict": "ACCEPT",
-                "score": 4,
+                "score": 3,
                 "veto_rule": null,
                 "cited_rules": [
                   "FUEL_RESERVE",
-                  "NEXT_LEG_DELAY",
-                  "PAX_CONNECTION"
+                  "PAX_CONNECTION",
+                  "NEXT_LEG_DELAY"
                 ],
-                "reason": "Max hold is 900/45=20 min, so 4 min hold is safe. Standard turnaround gives 18:13 off-block, 19 min late for DL2289 to AVL; the AMS connection at 1845 is not at risk.}"
+                "reason": "Max hold is 20 min (900kg spare at 45kg/min), so 4 min is safe. Standard turnaround gives 18:13 off-block, 19 min late for the 17:54 slot, which risks the 9 AMS connections.\n"
               },
               {
                 "option_id": "F",
                 "verdict": "ACCEPT",
-                "score": 4,
+                "score": 3,
                 "veto_rule": null,
                 "cited_rules": [
                   "FUEL_RESERVE",
-                  "NEXT_LEG_DELAY",
-                  "PAX_CONNECTION"
+                  "PAX_CONNECTION",
+                  "NEXT_LEG_DELAY"
                 ],
-                "reason": "4 min hold is within the 20 min fuel margin. Standard turnaround means 18:13 off-block, 19 min late for DL2289; connections are fine with a 17:33 in-gate."
+                "reason": "4 min hold is within the 20 min fuel limit. Standard turnaround leaves off-block at 18:13, 19 min late for the next leg.\n"
               },
               {
                 "option_id": "G",
@@ -843,22 +843,22 @@
                 "veto_rule": null,
                 "cited_rules": [
                   "FUEL_RESERVE",
-                  "NEXT_LEG_DELAY",
-                  "PAX_CONNECTION"
+                  "PAX_CONNECTION",
+                  "NEXT_LEG_DELAY"
                 ],
-                "reason": "4 min hold is well within the 20 min fuel margin. Expedited turnaround gives 18:03 off-block, only 9 min late, which is the best for the next leg; 17:33 in-gate protects connections."
+                "reason": "4 min hold is fuel-safe within the 20 min limit. Expedited turnaround gives 18:03 off-block, only 9 min late, which best protects the next leg and connections.\n"
               },
               {
                 "option_id": "H",
                 "verdict": "ACCEPT",
-                "score": 2,
+                "score": 1,
                 "veto_rule": null,
                 "cited_rules": [
                   "FUEL_RESERVE",
-                  "NEXT_LEG_DELAY",
-                  "PAX_CONNECTION"
+                  "PAX_CONNECTION",
+                  "NEXT_LEG_DELAY"
                 ],
-                "reason": "10 min hold is under the 20 min limit, so fuel is legal, but it lands 17:30, in-gate 17:39 and off-block 18:19, 25 min late for DL2289, and it leaves less fuel margin."
+                "reason": "10 min hold is within the 20 min fuel limit, so it is legal. It lands later and leaves at 18:19, the worst knock-on delay of the options.\n"
               }
             ],
             "counter_proposal": null
@@ -867,9 +867,9 @@
           "counter_option_id": null,
           "counter_checks": [],
           "guardrail_flags": [],
-          "latency_ms": 4973,
-          "input_tokens": 3850,
-          "output_tokens": 643
+          "latency_ms": 4449,
+          "input_tokens": 3869,
+          "output_tokens": 608
         },
         {
           "agent": "GROUND",
@@ -880,30 +880,28 @@
               {
                 "option_id": "E",
                 "verdict": "ACCEPT",
-                "score": 7,
+                "score": 9,
                 "veto_rule": null,
                 "cited_rules": [
                   "GATE_CONFLICT",
                   "CREW_DUTY_LIMIT",
                   "EQUIPMENT_AVAILABLE",
-                  "MIN_TURNAROUND",
-                  "GATE_CHANGE"
+                  "MIN_TURNAROUND"
                 ],
-                "reason": "A21 is open and Team 4 is on until 22:00. Tug A-2 is available and the 40 min standard turnaround is met (17:33 to 18:13). The change from A17 costs a little."
+                "reason": "A21 is open and Team 4 is on until 22:00. Tug A-2 is available and the 40 min turnaround meets the minimum. A21 is a change from planned A17, so it loses a point."
               },
               {
                 "option_id": "F",
                 "verdict": "ACCEPT",
-                "score": 7,
+                "score": 8,
                 "veto_rule": null,
                 "cited_rules": [
-                  "GATE_CONFLICT",
                   "CREW_DUTY_LIMIT",
                   "EQUIPMENT_AVAILABLE",
                   "MIN_TURNAROUND",
                   "GATE_CHANGE"
                 ],
-                "reason": "A23 is covered by Team 4 until 22:00 and no occupancy is noted. Tug A-2 is available and the 40 min turnaround is met. The gate change from A17 costs a little."
+                "reason": "A23 is covered by Team 4 until 22:00 and tug A-2 is available. The turnaround meets the minimum. It is a gate change from A17, and A21 is confirmed open, so it scores a bit lower."
               },
               {
                 "option_id": "G",
@@ -917,288 +915,10 @@
                   "MIN_TURNAROUND",
                   "GATE_CHANGE"
                 ],
-                "reason": "A21 is open, Team 4 is on until 22:00 and tug A-2 is available. The expedited 30 min turnaround (17:33 to 18:03) meets the minimum and cuts the delay. The gate change costs a little."
+                "reason": "A21 is open and Team 4 is on until 22:00. Expedited turnaround is 30 min, which meets the minimum. Off-block 18:03 recovers delay, but this is still a gate change and needs a quick crew and a tug."
               },
               {
                 "option_id": "H",
-                "verdict": "ACCEPT",
-                "score": 6,
-                "veto_rule": null,
-                "cited_rules": [
-                  "GATE_CONFLICT",
-                  "CREW_DUTY_LIMIT",
-                  "EQUIPMENT_AVAILABLE",
-                  "MIN_TURNAROUND",
-                  "GATE_CHANGE"
-                ],
-                "reason": "A21 is open at 17:39, Team 4 is on until 22:00 and tug A-2 is available. The 40 min turnaround is met, but off-block is 18:19, later than the other options, and the gate change costs a little."
-              }
-            ],
-            "counter_proposal": null
-          },
-          "veto_checks": [],
-          "counter_option_id": null,
-          "counter_checks": [],
-          "guardrail_flags": [],
-          "latency_ms": 4980,
-          "input_tokens": 3921,
-          "output_tokens": 750
-        }
-      ],
-      "new_shared_constraints": [],
-      "eliminated": []
-    },
-    {
-      "round": 3,
-      "options": [
-        {
-          "option_id": "E",
-          "landing_time": 1044,
-          "runway": "26R",
-          "gate": "A21",
-          "turnaround": "STANDARD",
-          "hold_min": 4,
-          "in_gate_time": 1053,
-          "next_leg_departure": 1093,
-          "source": "COUNTER",
-          "proposed_by": "GROUND",
-          "round_introduced": 1,
-          "public_cost": 48.5,
-          "cost_breakdown": {
-            "arrival_delay": 27.0,
-            "hold": 2.0,
-            "gate_change": 10.0,
-            "expedited": 0.0,
-            "next_leg_delay": 9.5
-          }
-        },
-        {
-          "option_id": "F",
-          "landing_time": 1044,
-          "runway": "26R",
-          "gate": "A23",
-          "turnaround": "STANDARD",
-          "hold_min": 4,
-          "in_gate_time": 1053,
-          "next_leg_departure": 1093,
-          "source": "SOLVER",
-          "proposed_by": null,
-          "round_introduced": 2,
-          "public_cost": 48.5,
-          "cost_breakdown": {
-            "arrival_delay": 27.0,
-            "hold": 2.0,
-            "gate_change": 10.0,
-            "expedited": 0.0,
-            "next_leg_delay": 9.5
-          }
-        },
-        {
-          "option_id": "G",
-          "landing_time": 1044,
-          "runway": "26R",
-          "gate": "A21",
-          "turnaround": "EXPEDITED",
-          "hold_min": 4,
-          "in_gate_time": 1053,
-          "next_leg_departure": 1083,
-          "source": "SOLVER",
-          "proposed_by": null,
-          "round_introduced": 2,
-          "public_cost": 51.5,
-          "cost_breakdown": {
-            "arrival_delay": 27.0,
-            "hold": 2.0,
-            "gate_change": 10.0,
-            "expedited": 8.0,
-            "next_leg_delay": 4.5
-          }
-        },
-        {
-          "option_id": "H",
-          "landing_time": 1050,
-          "runway": "26R",
-          "gate": "A21",
-          "turnaround": "STANDARD",
-          "hold_min": 10,
-          "in_gate_time": 1059,
-          "next_leg_departure": 1099,
-          "source": "SOLVER",
-          "proposed_by": null,
-          "round_introduced": 2,
-          "public_cost": 60.5,
-          "cost_breakdown": {
-            "arrival_delay": 33.0,
-            "hold": 5.0,
-            "gate_change": 10.0,
-            "expedited": 0.0,
-            "next_leg_delay": 12.5
-          }
-        }
-      ],
-      "turns": [
-        {
-          "agent": "ATC",
-          "round": 3,
-          "status": "OK",
-          "response": {
-            "assessments": [
-              {
-                "option_id": "E",
-                "verdict": "ACCEPT",
-                "score": 3,
-                "veto_rule": null,
-                "cited_rules": [
-                  "WAKE_SEPARATION",
-                  "SECTOR_THROUGHPUT"
-                ],
-                "reason": "Landing 17:24 is 3 min behind HEAVY DL811 (17:21) and 2 min ahead of WN459 (17:26). That is legal on open 26R but tight, and the squeeze lowers throughput.}"
-              },
-              {
-                "option_id": "F",
-                "verdict": "ACCEPT",
-                "score": 3,
-                "veto_rule": null,
-                "cited_rules": [
-                  "WAKE_SEPARATION",
-                  "SECTOR_THROUGHPUT"
-                ],
-                "reason": "Landing 17:24 on 26R is 3 min behind HEAVY DL811 and 2 min ahead of WN459 (17:26). Separation is acceptable but tight, and the squeeze costs throughput.}"
-              },
-              {
-                "option_id": "G",
-                "verdict": "ACCEPT",
-                "score": 3,
-                "veto_rule": null,
-                "cited_rules": [
-                  "WAKE_SEPARATION",
-                  "SECTOR_THROUGHPUT"
-                ],
-                "reason": "Landing 17:24 on 26R fits between DL811 (17:21) and WN459 (17:26) with minimal legal spacing. It squeezes the queue in a saturated sector at 30/hr.}"
-              },
-              {
-                "option_id": "H",
-                "verdict": "ACCEPT",
-                "score": 5,
-                "veto_rule": null,
-                "cited_rules": [
-                  "WAKE_SEPARATION",
-                  "SECTOR_THROUGHPUT"
-                ],
-                "reason": "Landing 17:30 sits 4 min after WN459 (17:26) and 3 min before DL1761 (17:33), with ample wake spacing. The longer 10 min hold costs some throughput.}"
-              }
-            ],
-            "counter_proposal": null
-          },
-          "veto_checks": [],
-          "counter_option_id": null,
-          "counter_checks": [],
-          "guardrail_flags": [],
-          "latency_ms": 8067,
-          "input_tokens": 4022,
-          "output_tokens": 1104
-        },
-        {
-          "agent": "PILOT",
-          "round": 3,
-          "status": "OK",
-          "response": {
-            "assessments": [
-              {
-                "option_id": "E",
-                "verdict": "ACCEPT",
-                "score": 4,
-                "veto_rule": null,
-                "cited_rules": [
-                  "FUEL_RESERVE",
-                  "PAX_CONNECTION",
-                  "NEXT_LEG_DELAY"
-                ],
-                "reason": "4 min hold is within the 20 min fuel limit ((4200-3300)/45). In-gate 17:33 is fine for the 18:45 AMS connection, but off-block 18:13 is 19 min late for DL2289.}"
-              },
-              {
-                "option_id": "F",
-                "verdict": "ACCEPT",
-                "score": 4,
-                "veto_rule": null,
-                "cited_rules": [
-                  "FUEL_RESERVE",
-                  "PAX_CONNECTION",
-                  "NEXT_LEG_DELAY"
-                ],
-                "reason": "4 min hold is within the 20 min fuel limit. In-gate 17:33 protects the DL72 connection, but off-block 18:13 is 19 min late for DL2289.}"
-              },
-              {
-                "option_id": "G",
-                "verdict": "ACCEPT",
-                "score": 8,
-                "veto_rule": null,
-                "cited_rules": [
-                  "FUEL_RESERVE",
-                  "PAX_CONNECTION",
-                  "NEXT_LEG_DELAY"
-                ],
-                "reason": "4 min hold is within the 20 min fuel limit. In-gate 17:33 protects the DL72 connection, and expedited turnaround cuts DL2289 delay to 9 min (off-block 18:03).}"
-              },
-              {
-                "option_id": "H",
-                "verdict": "ACCEPT",
-                "score": 2,
-                "veto_rule": null,
-                "cited_rules": [
-                  "FUEL_RESERVE",
-                  "PAX_CONNECTION",
-                  "NEXT_LEG_DELAY"
-                ],
-                "reason": "10 min hold is within the 20 min fuel limit, and in-gate 17:39 still allows the AMS connection, but off-block 18:19 makes DL2289 25 min late.}"
-              }
-            ],
-            "counter_proposal": null
-          },
-          "veto_checks": [],
-          "counter_option_id": null,
-          "counter_checks": [],
-          "guardrail_flags": [],
-          "latency_ms": 4172,
-          "input_tokens": 4112,
-          "output_tokens": 628
-        },
-        {
-          "agent": "GROUND",
-          "round": 3,
-          "status": "OK",
-          "response": {
-            "assessments": [
-              {
-                "option_id": "E",
-                "verdict": "ACCEPT",
-                "score": 6,
-                "veto_rule": null,
-                "cited_rules": [
-                  "GATE_CONFLICT",
-                  "CREW_DUTY_LIMIT",
-                  "EQUIPMENT_AVAILABLE",
-                  "MIN_TURNAROUND",
-                  "GATE_CHANGE"
-                ],
-                "reason": "A21 is open, Team 4 is on until 22:00 and tug A-2 is available. A 40 min turnaround meets the minimum. It changes the gate from planned A17, so the score is lowered."
-              },
-              {
-                "option_id": "F",
-                "verdict": "ACCEPT",
-                "score": 6,
-                "veto_rule": null,
-                "cited_rules": [
-                  "GATE_CONFLICT",
-                  "CREW_DUTY_LIMIT",
-                  "EQUIPMENT_AVAILABLE",
-                  "MIN_TURNAROUND",
-                  "GATE_CHANGE"
-                ],
-                "reason": "A23 is free for the 17:33 in-gate and Team 4 is on until 22:00. Tug A-2 is available and the 40 min turnaround is legal. It is a gate change from A17, so the score is lowered."
-              },
-              {
-                "option_id": "G",
                 "verdict": "ACCEPT",
                 "score": 7,
                 "veto_rule": null,
@@ -1206,24 +926,9 @@
                   "GATE_CONFLICT",
                   "CREW_DUTY_LIMIT",
                   "EQUIPMENT_AVAILABLE",
-                  "MIN_TURNAROUND",
                   "GATE_CHANGE"
                 ],
-                "reason": "A21 is open, Team 4 covers the turnaround to 18:03 and tug A-2 is available. The 30 min expedited turnaround meets its minimum. The gate change from A17 lowers the score slightly."
-              },
-              {
-                "option_id": "H",
-                "verdict": "ACCEPT",
-                "score": 5,
-                "veto_rule": null,
-                "cited_rules": [
-                  "GATE_CONFLICT",
-                  "CREW_DUTY_LIMIT",
-                  "EQUIPMENT_AVAILABLE",
-                  "MIN_TURNAROUND",
-                  "GATE_CHANGE"
-                ],
-                "reason": "A21 is free at 17:39 and Team 4 is on until 22:00. Tug A-2 is available and the turnaround is legal. The gate change and later 18:19 off-block lower the score."
+                "reason": "A21 is open, Team 4 is on until 22:00 and tug A-2 is available. Off-block is 18:19, which is later and gives a longer delay. It is also a gate change from A17, so it scores lower."
               }
             ],
             "counter_proposal": null
@@ -1232,9 +937,9 @@
           "counter_option_id": null,
           "counter_checks": [],
           "guardrail_flags": [],
-          "latency_ms": 4822,
-          "input_tokens": 4149,
-          "output_tokens": 745
+          "latency_ms": 4966,
+          "input_tokens": 3926,
+          "output_tokens": 724
         }
       ],
       "new_shared_constraints": [],
@@ -1264,9 +969,9 @@
         "next_leg_delay": 4.5
       }
     },
-    "min_score": 3,
-    "rounds_used": 3,
-    "explanation": "Option G passed every hard rule and had the best worst-case score (3/10) across ATC, pilot and ground.",
+    "min_score": 6,
+    "rounds_used": 2,
+    "explanation": "Option G passed every hard rule and had the best worst-case score (6/10) across ATC, pilot and ground.",
     "party_messages": {
       "ATC": "Land 26R at 17:24L (hold 4 min).",
       "PILOT": "Expect 26R 17:24L, gate A21, expedited turnaround, next leg off-block 18:03L.",
@@ -1382,7 +1087,7 @@
   "log": [
     {
       "seq": 1,
-      "wall_time": "2026-10-31T12:07:33+08:00",
+      "wall_time": "2026-10-31T12:19:40+08:00",
       "round": 0,
       "actor": "ORCH",
       "kind": "SCENARIO",
@@ -1392,7 +1097,7 @@
     },
     {
       "seq": 2,
-      "wall_time": "2026-10-31T12:07:33+08:00",
+      "wall_time": "2026-10-31T12:19:40+08:00",
       "round": 1,
       "actor": "SOLVER",
       "kind": "OPTIONS",
@@ -1402,17 +1107,17 @@
     },
     {
       "seq": 3,
-      "wall_time": "2026-10-31T12:07:40+08:00",
+      "wall_time": "2026-10-31T12:19:46+08:00",
       "round": 1,
       "actor": "ATC",
       "kind": "ASSESSMENT",
-      "summary": "A=5, B=5, C=5",
+      "summary": "A=4, B=4, C=4",
       "rule_checks": [],
       "ref": null
     },
     {
       "seq": 4,
-      "wall_time": "2026-10-31T12:07:40+08:00",
+      "wall_time": "2026-10-31T12:19:46+08:00",
       "round": 1,
       "actor": "PILOT",
       "kind": "ASSESSMENT",
@@ -1422,17 +1127,17 @@
     },
     {
       "seq": 5,
-      "wall_time": "2026-10-31T12:07:40+08:00",
+      "wall_time": "2026-10-31T12:19:46+08:00",
       "round": 1,
       "actor": "PILOT",
       "kind": "COUNTER",
-      "summary": "Counter D: 17:24 26R gate A17 expedited \u2014 Expedited 30 min turnaround from 17:33 in-gate gives off-block 18:03, cutting the next leg delay to 9 min with same fuel-safe hold.",
+      "summary": "Counter D: 17:24 26R gate A17 expedited \u2014 Expedited 30 min turnaround from 17:33 in-gate gives 18:03 off-block, cutting next-leg delay to 9 min instead of 19, at no fuel cost.",
       "rule_checks": [],
       "ref": "D"
     },
     {
       "seq": 6,
-      "wall_time": "2026-10-31T12:07:40+08:00",
+      "wall_time": "2026-10-31T12:19:46+08:00",
       "round": 1,
       "actor": "CHECKER",
       "kind": "COUNTER_CHECK",
@@ -1523,17 +1228,17 @@
     },
     {
       "seq": 7,
-      "wall_time": "2026-10-31T12:07:40+08:00",
+      "wall_time": "2026-10-31T12:19:46+08:00",
       "round": 1,
       "actor": "GROUND",
       "kind": "ASSESSMENT",
-      "summary": "A=VETO GATE_CONFLICT, B=VETO GATE_CONFLICT, C=VETO GATE_CONFLICT",
+      "summary": "A=VETO GATE_CONFLICT, B=VETO CREW_DUTY_LIMIT, C=VETO GATE_CONFLICT",
       "rule_checks": [],
       "ref": null
     },
     {
       "seq": 8,
-      "wall_time": "2026-10-31T12:07:40+08:00",
+      "wall_time": "2026-10-31T12:19:46+08:00",
       "round": 1,
       "actor": "CHECKER",
       "kind": "VETO_CHECK",
@@ -1552,7 +1257,7 @@
     },
     {
       "seq": 9,
-      "wall_time": "2026-10-31T12:07:40+08:00",
+      "wall_time": "2026-10-31T12:19:46+08:00",
       "round": 1,
       "actor": "ORCH",
       "kind": "SHARED_CONSTRAINT",
@@ -1562,18 +1267,18 @@
     },
     {
       "seq": 10,
-      "wall_time": "2026-10-31T12:07:40+08:00",
+      "wall_time": "2026-10-31T12:19:46+08:00",
       "round": 1,
       "actor": "CHECKER",
       "kind": "VETO_CHECK",
-      "summary": "GROUND veto of B (GATE_CONFLICT) confirmed",
+      "summary": "GROUND veto of B (CREW_DUTY_LIMIT) confirmed",
       "rule_checks": [
         {
-          "rule_id": "GATE_CONFLICT",
+          "rule_id": "CREW_DUTY_LIMIT",
           "domain": "GROUND",
           "hard": true,
           "passed": false,
-          "detail": "A15 free at 17:40, in-gate 17:33",
+          "detail": "team 3 shift ends 18:00, turn ends 18:13",
           "private": true
         }
       ],
@@ -1581,17 +1286,17 @@
     },
     {
       "seq": 11,
-      "wall_time": "2026-10-31T12:07:40+08:00",
+      "wall_time": "2026-10-31T12:19:46+08:00",
       "round": 1,
       "actor": "ORCH",
       "kind": "SHARED_CONSTRAINT",
-      "summary": "Gate A15 unavailable before 17:40",
+      "summary": "Turnaround at A15 must finish by 18:00",
       "rule_checks": [],
       "ref": "B"
     },
     {
       "seq": 12,
-      "wall_time": "2026-10-31T12:07:40+08:00",
+      "wall_time": "2026-10-31T12:19:46+08:00",
       "round": 1,
       "actor": "CHECKER",
       "kind": "VETO_CHECK",
@@ -1610,7 +1315,7 @@
     },
     {
       "seq": 13,
-      "wall_time": "2026-10-31T12:07:40+08:00",
+      "wall_time": "2026-10-31T12:19:46+08:00",
       "round": 1,
       "actor": "ORCH",
       "kind": "SHARED_CONSTRAINT",
@@ -1620,17 +1325,17 @@
     },
     {
       "seq": 14,
-      "wall_time": "2026-10-31T12:07:40+08:00",
+      "wall_time": "2026-10-31T12:19:46+08:00",
       "round": 1,
       "actor": "GROUND",
       "kind": "COUNTER",
-      "summary": "Counter E: 17:24 26R gate A21 standard \u2014 A21 is open and covered by Team 4 until 22:00. Tug A-2 is available. In-gate 17:33 and a 40 min turnaround give 18:13 off-block, which is within crew limits.",
+      "summary": "Counter E: 17:24 26R gate A21 standard \u2014 A21 is open and Team 4 is on until 22:00, covering the 18:13 off-block. Tug A-2 is available. Only the gate changes from the planned A17.",
       "rule_checks": [],
       "ref": "E"
     },
     {
       "seq": 15,
-      "wall_time": "2026-10-31T12:07:40+08:00",
+      "wall_time": "2026-10-31T12:19:46+08:00",
       "round": 1,
       "actor": "CHECKER",
       "kind": "COUNTER_CHECK",
@@ -1721,7 +1426,7 @@
     },
     {
       "seq": 16,
-      "wall_time": "2026-10-31T12:07:40+08:00",
+      "wall_time": "2026-10-31T12:19:46+08:00",
       "round": 2,
       "actor": "SOLVER",
       "kind": "OPTIONS",
@@ -1731,86 +1436,66 @@
     },
     {
       "seq": 17,
-      "wall_time": "2026-10-31T12:07:48+08:00",
+      "wall_time": "2026-10-31T12:19:51+08:00",
       "round": 2,
       "actor": "ATC",
       "kind": "ASSESSMENT",
-      "summary": "E=5, F=5, G=5, H=4",
+      "summary": "E=6, F=6, G=6, H=5",
       "rule_checks": [],
       "ref": null
     },
     {
       "seq": 18,
-      "wall_time": "2026-10-31T12:07:48+08:00",
+      "wall_time": "2026-10-31T12:19:51+08:00",
       "round": 2,
       "actor": "PILOT",
       "kind": "ASSESSMENT",
-      "summary": "E=4, F=4, G=7, H=2",
+      "summary": "E=3, F=3, G=7, H=1",
       "rule_checks": [],
       "ref": null
     },
     {
       "seq": 19,
-      "wall_time": "2026-10-31T12:07:48+08:00",
+      "wall_time": "2026-10-31T12:19:51+08:00",
       "round": 2,
       "actor": "GROUND",
       "kind": "ASSESSMENT",
-      "summary": "E=7, F=7, G=8, H=6",
+      "summary": "E=9, F=8, G=8, H=7",
       "rule_checks": [],
       "ref": null
     },
     {
       "seq": 20,
-      "wall_time": "2026-10-31T12:07:56+08:00",
-      "round": 3,
-      "actor": "ATC",
-      "kind": "ASSESSMENT",
-      "summary": "E=3, F=3, G=3, H=5",
+      "wall_time": "2026-10-31T12:19:51+08:00",
+      "round": 2,
+      "actor": "ORCH",
+      "kind": "DECISION",
+      "summary": "Converged after round 2: no new vetoes or counter-proposals, every remaining option scored by all three agents",
       "rule_checks": [],
       "ref": null
     },
     {
       "seq": 21,
-      "wall_time": "2026-10-31T12:07:56+08:00",
-      "round": 3,
-      "actor": "PILOT",
-      "kind": "ASSESSMENT",
-      "summary": "E=4, F=4, G=8, H=2",
-      "rule_checks": [],
-      "ref": null
-    },
-    {
-      "seq": 22,
-      "wall_time": "2026-10-31T12:07:56+08:00",
-      "round": 3,
-      "actor": "GROUND",
-      "kind": "ASSESSMENT",
-      "summary": "E=6, F=6, G=7, H=5",
-      "rule_checks": [],
-      "ref": null
-    },
-    {
-      "seq": 23,
-      "wall_time": "2026-10-31T12:07:56+08:00",
-      "round": 3,
+      "wall_time": "2026-10-31T12:19:51+08:00",
+      "round": 2,
       "actor": "ORCH",
       "kind": "DECISION",
-      "summary": "CONSENSUS: G: 17:24 26R gate A21 expedited. Option G passed every hard rule and had the best worst-case score (3/10) across ATC, pilot and ground.",
+      "summary": "CONSENSUS: G: 17:24 26R gate A21 expedited. Option G passed every hard rule and had the best worst-case score (6/10) across ATC, pilot and ground.",
       "rule_checks": [],
       "ref": "G"
     }
   ],
   "metrics": {
-    "rounds_used": 3,
-    "llm_calls": 9,
+    "rounds_used": 2,
+    "llm_calls": 6,
     "invalid_outputs": 0,
     "vetoes_confirmed": 3,
     "vetoes_rejected": 0,
     "counters_proposed": 2,
     "counters_passed": 1,
-    "input_tokens": 32842,
-    "output_tokens": 6955,
-    "est_cost_usd": 0.1352,
-    "wall_ms": 23389
+    "input_tokens": 20793,
+    "output_tokens": 3786,
+    "est_cost_usd": 0.0794,
+    "wall_ms": 11244
   }
 }

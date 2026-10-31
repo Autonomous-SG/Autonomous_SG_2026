@@ -218,9 +218,15 @@ async def negotiate(req: NegotiateRequest, deps: Deps, run_agent=agent_runner.ru
                                 score=a.score, cited_rules=a.cited_rules, reason=a.reason)
                  for t in turns if t.response for a in t.response.assessments]
 
-        if all(t.status == "OK" for t in turns) and _unanimous(turns, alive):
-            log.add(r, "ORCH", "DECISION", f"Early stop after round {r}: unanimous acceptance with every score ≥ {EARLY_STOP_SCORE}")
-            break
+        if r < MAX_ROUNDS and alive and all(t.status == "OK" for t in turns):
+            if not confirmed_vetoes and not counters:
+                log.add(r, "ORCH", "DECISION", f"Converged after round {r}: no new vetoes or counter-proposals, "
+                                               f"every remaining option scored by all three agents")
+                break
+            if not counters and _unanimous(turns, alive):
+                log.add(r, "ORCH", "DECISION",
+                        f"Early stop after round {r}: unanimous acceptance with every score ≥ {EARLY_STOP_SCORE}")
+                break
 
     final_turns = turns_by_round[-1] if turns_by_round else []
     assessed = {a.option_id for t in final_turns if t.response for a in t.response.assessments}

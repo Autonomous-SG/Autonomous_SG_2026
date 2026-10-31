@@ -67,7 +67,7 @@ Agents receive only the **`notes` string** of their private slice (messy free te
 
 **Round 3** — final vote. Only `VETO` with a confirmed hard rule removes an option; soft dislike can only lower a score.
 
-**Early stop:** after any round, if one option is ACCEPTed by all three with every score ≥ 7, stop.
+**Target 2 rounds, round 3 only to confirm.** After any round, stop and decide if that round produced **no new information** — no confirmed veto and no counter-proposal that passed the checker — and at least one option survives (every survivor has then been scored by all three agents). Also stop if one option is ACCEPTed by all three with every score ≥ 7 and no new counter is pending. Round 3 only happens when round 2 introduced something the agents haven't all voted on (e.g. a counter-proposal) — it is the confirmation vote. Hard cap stays at 3.
 
 **Decision rule (code, `decision.decide`)**
 1. Drop options with a confirmed veto in the final round (or earlier).

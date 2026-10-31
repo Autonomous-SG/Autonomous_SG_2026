@@ -278,7 +278,7 @@
                 "cited_rules": [
                   "SECTOR_THROUGHPUT"
                 ],
-                "reason": "26R is open at 17:24, but the slot squeezes between DL811 at 17:21 and WN459 at 17:26 in a saturated sector with AAR cut to 30/hr. Soft penalty only.\n\n(Gate does not affect ATC.)"
+                "reason": "Lands on open 26R at 17:24, squeezed between DL811 at 17:21 and WN459 at 17:26 with the sector saturated. Not dependent on 27L reopening, so acceptable but tight.}"
               },
               {
                 "option_id": "B",
@@ -288,7 +288,7 @@
                 "cited_rules": [
                   "SECTOR_THROUGHPUT"
                 ],
-                "reason": "Same 17:24 slot on open 26R squeezed between DL811 and WN459 in a saturated sector; soft throughput penalty only. Gate is not an ATC matter.\n\n(No runway dependence on 27L.)"
+                "reason": "Same 26R slot at 17:24 as A; the gate choice does not affect ATC. Squeezing between queued arrivals lowers throughput, but 26R is open and it does not rely on 27L.}"
               },
               {
                 "option_id": "C",
@@ -298,7 +298,7 @@
                 "cited_rules": [
                   "SECTOR_THROUGHPUT"
                 ],
-                "reason": "Same 17:24 slot on open 26R squeezed between DL811 and WN459 in a saturated sector; soft throughput penalty only. Gate is not an ATC matter.\n\n(No runway dependence on 27L.)"
+                "reason": "Same 26R slot at 17:24 as A; the gate choice is neutral for ATC. The squeeze between DL811 and WN459 costs some throughput, but there is no hard-rule problem.}"
               }
             ],
             "counter_proposal": null
@@ -307,9 +307,9 @@
           "counter_option_id": null,
           "counter_checks": [],
           "guardrail_flags": [],
-          "latency_ms": 6293,
+          "latency_ms": 5574,
           "input_tokens": 3015,
-          "output_tokens": 758
+          "output_tokens": 687
         },
         {
           "agent": "PILOT",
@@ -325,7 +325,7 @@
                 "cited_rules": [
                   "FUEL_RESERVE"
                 ],
-                "reason": "Max hold is (3400-3300)/45 = 2.2 min. A holds 4 min, which would burn about 180 kg and take fuel below the 3300 kg minimum landing fuel.\n"
+                "reason": "Max hold is (3400-3300)/45 = 2.2 min. A holds 4 min (landing 17:24), which would burn into the 3300kg minimum landing fuel."
               },
               {
                 "option_id": "B",
@@ -335,7 +335,7 @@
                 "cited_rules": [
                   "FUEL_RESERVE"
                 ],
-                "reason": "Max hold is 2.2 min from 100 kg spare fuel at 45 kg/min. B holds 4 min, which breaches the minimum landing fuel.\n"
+                "reason": "Max hold is 2.2 min with 100kg spare at 45kg/min. B holds 4 min (landing 17:24), so it breaches the minimum landing fuel."
               },
               {
                 "option_id": "C",
@@ -345,7 +345,7 @@
                 "cited_rules": [
                   "FUEL_RESERVE"
                 ],
-                "reason": "Spare fuel of 100 kg allows only 2.2 min of holding. C holds 4 min, so it breaks the fuel reserve.\n"
+                "reason": "Holding 4 min (landing 17:24) exceeds the 2.2 min fuel allowance above the 3300kg minimum landing fuel."
               }
             ],
             "counter_proposal": {
@@ -354,7 +354,7 @@
               "runway": "26R",
               "gate": "A17",
               "turnaround": "EXPEDITED",
-              "reason": "Landing at the earliest slot, 17:20, needs no hold and keeps fuel within reserve. An expedited turnaround protects the DL72 AMS connections and the 17:54 next leg."
+              "reason": "Landing at the earliest slot, 17:20, needs no hold and stays within fuel reserves. Gate A17 keeps the plan unchanged. Expedited turnaround limits the next-leg delay to AVL."
             }
           },
           "veto_checks": [
@@ -467,9 +467,9 @@
             }
           ],
           "guardrail_flags": [],
-          "latency_ms": 6868,
+          "latency_ms": 7263,
           "input_tokens": 3062,
-          "output_tokens": 911
+          "output_tokens": 1009
         },
         {
           "agent": "GROUND",
@@ -485,18 +485,17 @@
                 "cited_rules": [
                   "GATE_CONFLICT"
                 ],
-                "reason": "A17 is occupied by a delayed outbound with estimated push 17:50-17:55, so it is not free at the 17:33 in-gate time."
+                "reason": "A17 is occupied by a delayed outbound with estimated push 17:50-17:55, so it is not free by the 17:33 in-gate time."
               },
               {
                 "option_id": "B",
                 "verdict": "VETO",
                 "score": 0,
-                "veto_rule": "CREW_DUTY_LIMIT",
+                "veto_rule": "GATE_CONFLICT",
                 "cited_rules": [
-                  "CREW_DUTY_LIMIT",
-                  "GATE_CHANGE"
+                  "GATE_CONFLICT"
                 ],
-                "reason": "A15 is free by 17:40 but not at 17:33, so there is a gate conflict; also Team 3 shift ends 18:00 with no OT, before the 18:13 off-block.  Crew limit is the clear breach.  "
+                "reason": "A15 is occupied until about 17:40, so it is not free by the 17:33 in-gate time."
               },
               {
                 "option_id": "C",
@@ -504,10 +503,9 @@
                 "score": 0,
                 "veto_rule": "GATE_CONFLICT",
                 "cited_rules": [
-                  "GATE_CONFLICT",
-                  "CREW_DUTY_LIMIT"
+                  "GATE_CONFLICT"
                 ],
-                "reason": "A19 has a jetbridge fault until tech ETA 18:30, and Team 3 shift ends 18:00 with no OT, before the 18:13 off-block."
+                "reason": "A19 has a jetbridge fault with tech ETA 18:30, so it is unusable at the 17:33 in-gate time."
               }
             ],
             "counter_proposal": null
@@ -522,11 +520,11 @@
               "private": true
             },
             {
-              "rule_id": "CREW_DUTY_LIMIT",
+              "rule_id": "GATE_CONFLICT",
               "domain": "GROUND",
               "hard": true,
               "passed": false,
-              "detail": "team 3 shift ends 18:00, turn ends 18:13",
+              "detail": "A15 free at 17:40, in-gate 17:33",
               "private": true
             },
             {
@@ -540,10 +538,12 @@
           ],
           "counter_option_id": null,
           "counter_checks": [],
-          "guardrail_flags": [],
-          "latency_ms": 3417,
-          "input_tokens": 3081,
-          "output_tokens": 427
+          "guardrail_flags": [
+            "INCOMPLETE_RETRY"
+          ],
+          "latency_ms": 5609,
+          "input_tokens": 6190,
+          "output_tokens": 599
         }
       ],
       "new_shared_constraints": [
@@ -568,12 +568,12 @@
           "round": 1
         },
         {
-          "kind": "TURNAROUND_DEADLINE",
-          "statement": "Turnaround at A15 must finish by 18:00",
-          "time": 1080,
+          "kind": "GATE_UNAVAILABLE",
+          "statement": "Gate A15 unavailable before 17:40",
+          "time": 1060,
           "gate": "A15",
           "runway": null,
-          "from_rule": "CREW_DUTY_LIMIT",
+          "from_rule": "GATE_CONFLICT",
           "from_agent": "GROUND",
           "round": 1
         },
@@ -677,7 +677,7 @@
   "log": [
     {
       "seq": 1,
-      "wall_time": "2026-10-31T12:10:06+08:00",
+      "wall_time": "2026-10-31T12:20:22+08:00",
       "round": 0,
       "actor": "ORCH",
       "kind": "SCENARIO",
@@ -687,7 +687,7 @@
     },
     {
       "seq": 2,
-      "wall_time": "2026-10-31T12:10:06+08:00",
+      "wall_time": "2026-10-31T12:20:22+08:00",
       "round": 1,
       "actor": "SOLVER",
       "kind": "OPTIONS",
@@ -697,7 +697,7 @@
     },
     {
       "seq": 3,
-      "wall_time": "2026-10-31T12:10:13+08:00",
+      "wall_time": "2026-10-31T12:20:29+08:00",
       "round": 1,
       "actor": "ATC",
       "kind": "ASSESSMENT",
@@ -707,7 +707,7 @@
     },
     {
       "seq": 4,
-      "wall_time": "2026-10-31T12:10:13+08:00",
+      "wall_time": "2026-10-31T12:20:29+08:00",
       "round": 1,
       "actor": "PILOT",
       "kind": "ASSESSMENT",
@@ -717,7 +717,7 @@
     },
     {
       "seq": 5,
-      "wall_time": "2026-10-31T12:10:13+08:00",
+      "wall_time": "2026-10-31T12:20:29+08:00",
       "round": 1,
       "actor": "CHECKER",
       "kind": "VETO_CHECK",
@@ -736,7 +736,7 @@
     },
     {
       "seq": 6,
-      "wall_time": "2026-10-31T12:10:13+08:00",
+      "wall_time": "2026-10-31T12:20:29+08:00",
       "round": 1,
       "actor": "ORCH",
       "kind": "SHARED_CONSTRAINT",
@@ -746,7 +746,7 @@
     },
     {
       "seq": 7,
-      "wall_time": "2026-10-31T12:10:13+08:00",
+      "wall_time": "2026-10-31T12:20:29+08:00",
       "round": 1,
       "actor": "CHECKER",
       "kind": "VETO_CHECK",
@@ -765,7 +765,7 @@
     },
     {
       "seq": 8,
-      "wall_time": "2026-10-31T12:10:13+08:00",
+      "wall_time": "2026-10-31T12:20:29+08:00",
       "round": 1,
       "actor": "CHECKER",
       "kind": "VETO_CHECK",
@@ -784,17 +784,17 @@
     },
     {
       "seq": 9,
-      "wall_time": "2026-10-31T12:10:13+08:00",
+      "wall_time": "2026-10-31T12:20:29+08:00",
       "round": 1,
       "actor": "PILOT",
       "kind": "COUNTER",
-      "summary": "Counter D: 17:20 26R gate A17 expedited \u2014 Landing at the earliest slot, 17:20, needs no hold and keeps fuel within reserve. An expedited turnaround protects the DL72 AMS connections and the 17:54 next leg.",
+      "summary": "Counter D: 17:20 26R gate A17 expedited \u2014 Landing at the earliest slot, 17:20, needs no hold and stays within fuel reserves. Gate A17 keeps the plan unchanged. Expedited turnaround limits the next-leg delay to AVL.",
       "rule_checks": [],
       "ref": "D"
     },
     {
       "seq": 10,
-      "wall_time": "2026-10-31T12:10:13+08:00",
+      "wall_time": "2026-10-31T12:20:29+08:00",
       "round": 1,
       "actor": "CHECKER",
       "kind": "COUNTER_CHECK",
@@ -885,17 +885,27 @@
     },
     {
       "seq": 11,
-      "wall_time": "2026-10-31T12:10:13+08:00",
+      "wall_time": "2026-10-31T12:20:29+08:00",
       "round": 1,
       "actor": "GROUND",
       "kind": "ASSESSMENT",
-      "summary": "A=VETO GATE_CONFLICT, B=VETO CREW_DUTY_LIMIT, C=VETO GATE_CONFLICT",
+      "summary": "A=VETO GATE_CONFLICT, B=VETO GATE_CONFLICT, C=VETO GATE_CONFLICT",
       "rule_checks": [],
       "ref": null
     },
     {
       "seq": 12,
-      "wall_time": "2026-10-31T12:10:13+08:00",
+      "wall_time": "2026-10-31T12:20:29+08:00",
+      "round": 1,
+      "actor": "ORCH",
+      "kind": "GUARDRAIL",
+      "summary": "GROUND: INCOMPLETE_RETRY",
+      "rule_checks": [],
+      "ref": null
+    },
+    {
+      "seq": 13,
+      "wall_time": "2026-10-31T12:20:29+08:00",
       "round": 1,
       "actor": "CHECKER",
       "kind": "VETO_CHECK",
@@ -913,8 +923,8 @@
       "ref": "A"
     },
     {
-      "seq": 13,
-      "wall_time": "2026-10-31T12:10:13+08:00",
+      "seq": 14,
+      "wall_time": "2026-10-31T12:20:29+08:00",
       "round": 1,
       "actor": "ORCH",
       "kind": "SHARED_CONSTRAINT",
@@ -923,37 +933,37 @@
       "ref": "A"
     },
     {
-      "seq": 14,
-      "wall_time": "2026-10-31T12:10:13+08:00",
+      "seq": 15,
+      "wall_time": "2026-10-31T12:20:29+08:00",
       "round": 1,
       "actor": "CHECKER",
       "kind": "VETO_CHECK",
-      "summary": "GROUND veto of B (CREW_DUTY_LIMIT) confirmed",
+      "summary": "GROUND veto of B (GATE_CONFLICT) confirmed",
       "rule_checks": [
         {
-          "rule_id": "CREW_DUTY_LIMIT",
+          "rule_id": "GATE_CONFLICT",
           "domain": "GROUND",
           "hard": true,
           "passed": false,
-          "detail": "team 3 shift ends 18:00, turn ends 18:13",
+          "detail": "A15 free at 17:40, in-gate 17:33",
           "private": true
         }
       ],
       "ref": "B"
     },
     {
-      "seq": 15,
-      "wall_time": "2026-10-31T12:10:13+08:00",
+      "seq": 16,
+      "wall_time": "2026-10-31T12:20:29+08:00",
       "round": 1,
       "actor": "ORCH",
       "kind": "SHARED_CONSTRAINT",
-      "summary": "Turnaround at A15 must finish by 18:00",
+      "summary": "Gate A15 unavailable before 17:40",
       "rule_checks": [],
       "ref": "B"
     },
     {
-      "seq": 16,
-      "wall_time": "2026-10-31T12:10:13+08:00",
+      "seq": 17,
+      "wall_time": "2026-10-31T12:20:29+08:00",
       "round": 1,
       "actor": "CHECKER",
       "kind": "VETO_CHECK",
@@ -971,8 +981,8 @@
       "ref": "C"
     },
     {
-      "seq": 17,
-      "wall_time": "2026-10-31T12:10:13+08:00",
+      "seq": 18,
+      "wall_time": "2026-10-31T12:20:29+08:00",
       "round": 1,
       "actor": "ORCH",
       "kind": "SHARED_CONSTRAINT",
@@ -981,8 +991,8 @@
       "ref": "C"
     },
     {
-      "seq": 18,
-      "wall_time": "2026-10-31T12:10:13+08:00",
+      "seq": 19,
+      "wall_time": "2026-10-31T12:20:29+08:00",
       "round": 2,
       "actor": "ORCH",
       "kind": "DECISION",
@@ -991,8 +1001,8 @@
       "ref": null
     },
     {
-      "seq": 19,
-      "wall_time": "2026-10-31T12:10:13+08:00",
+      "seq": 20,
+      "wall_time": "2026-10-31T12:20:29+08:00",
       "round": 1,
       "actor": "ORCH",
       "kind": "DECISION",
@@ -1009,9 +1019,9 @@
     "vetoes_rejected": 0,
     "counters_proposed": 1,
     "counters_passed": 0,
-    "input_tokens": 9158,
-    "output_tokens": 2096,
-    "est_cost_usd": 0.0393,
-    "wall_ms": 6971
+    "input_tokens": 12267,
+    "output_tokens": 2295,
+    "est_cost_usd": 0.0475,
+    "wall_ms": 7368
   }
 }
