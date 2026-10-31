@@ -236,6 +236,9 @@ Files: everything in `frontend/autonomous_hackathon/src/`, `vite.config.js` (add
 ### Stand-ins until P1/P2 merge
 `backend/negotiation/devkit.py` (P3) has a hand-built DL912 world (`dl912_world()`, row 20919) and simple working versions of every P1/P2 function above, with the same signatures. The orchestrator uses your real module automatically as soon as it exists (`negotiation/world.py`, `data.py`, `solver.py`, `rules.py`, `decision.py`, `baselines.py`); `GET /api/health` shows which functions are `real` vs `dev`. P1/P2: use `dl912_world()` as your test fixture and feel free to copy logic from devkit. Force a mode with env `DEPS=dev|real`.
 
+### Integration check (run before every merge to main)
+`cd backend && .venv/bin/python -m scripts.check_deps --real` runs full offline negotiations (no API cost) through the orchestrator with every real module that exists, and fails on any crash or unsafe recommendation. P2 functions are currently pinned to devkit in `orchestrator.PINNED_TO_DEVKIT` (13:58) because the real ones crash; remove names from that set once `--real` prints PASS.
+
 ### Shared (tell the team before editing)
 `backend/negotiation/schemas.py`, `timeutil.py`, `PLAN.md`.
 

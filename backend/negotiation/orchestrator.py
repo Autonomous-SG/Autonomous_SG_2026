@@ -49,13 +49,19 @@ class Deps:
             raise AttributeError(name) from None
 
 
+# Pinned to devkit in "auto" mode until the real module passes `python -m scripts.check_deps --real`.
+# Remove a name from this set to switch that function to the real module.
+PINNED_TO_DEVKIT = {"generate_options", "make_option", "check_option", "verify_veto", "derive_shared_constraint",
+                    "decide", "compare"}
+
+
 def load_deps(mode: str | None = None) -> Deps:
-    """mode: "dev" = all devkit, "real" = all real modules, "auto" (default) = real where available."""
+    """mode: "dev" = all devkit, "real" = all real modules, "auto" (default) = real where available and not pinned."""
     mode = mode or os.getenv("DEPS", "auto")
     fns, sources = {}, {}
     for fn, (module, attr) in _DEP_SOURCES.items():
         real = None
-        if mode != "dev":
+        if mode == "real" or (mode == "auto" and fn not in PINNED_TO_DEVKIT):
             try:
                 real = getattr(importlib.import_module(f"negotiation.{module}"), attr)
             except (ImportError, AttributeError):
