@@ -84,7 +84,7 @@ Put `flights.csv` from the Challenge #2 folder in `data/` (not committed; 38.6 M
 ### Try it in 2 minutes
 1. Open the UI; it loads real flights from the backend (first load ~3 s).
 2. Destination airport **ATL**, date **12/01/2015**, flight **DL912 · ORD → ATL** (the reference case), disruption **Runway closure** → **Run negotiation** (10–20 s, ~$0.10).
-3. Read the timeline (votes, vetoes, checker evidence, shared constraints), the recommendation and the comparison; click **Approve** or **Reject**.
+3. Read the timeline (votes, vetoes, checker evidence, shared constraints), the recommendation and the comparison; click **Approve** or **Reject**. A rejected plan is never offered again for that flight and disruption (remembered until the backend restarts); rerun to get the next-best plan.
 4. Try any of the 320 destination airports, the three disruption types, and the test conditions: prompt injection, contradictory agent notes, agent timeout, no feasible plan.
 5. Offline backup: **Import saved result** → `backend/fixtures/negotiation_example.json` (a real recorded run; attack runs in `backend/fixtures/attack_*.json`).
 

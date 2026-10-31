@@ -113,7 +113,9 @@ async def _run(view: AgentView, world: World, run_agent) -> AgentTurn:
     return await run_agent(view)
 
 
-async def negotiate(req: NegotiateRequest, deps: Deps, run_agent=agent_runner.run_agent) -> NegotiationResult:
+async def negotiate(req: NegotiateRequest, deps: Deps, run_agent=agent_runner.run_agent,
+                    rejected: list[Option] | None = None) -> NegotiationResult:
+    """`rejected`: plans the duty manager already rejected for this flight + event; never offered or chosen again."""
     t0 = time.monotonic()
     log = Log()
     world: World = deps.build_world(req.row_id, req.event, req.seed, req.attack)
@@ -125,7 +127,13 @@ async def negotiate(req: NegotiateRequest, deps: Deps, run_agent=agent_runner.ru
             ref=f"flights.csv#{req.row_id}")
 
     ids = _Ids()
-    seen: list[Option] = []
+    rejected = list(rejected or [])
+    rejected_keys = {_key(o) for o in rejected}
+    if rejected:
+        log.add(0, "ORCH", "GUARDRAIL",
+                f"Excluding {len(rejected)} plan(s) rejected by the duty manager: "
+                + "; ".join(_describe(o) for o in rejected))
+    seen: list[Option] = list(rejected)  # solver, counters and fallback all skip anything in `seen`
     alive: list[Option] = []
     shared: list[SharedConstraint] = []
     rounds: list[RoundRecord] = []
@@ -200,7 +208,11 @@ async def negotiate(req: NegotiateRequest, deps: Deps, run_agent=agent_runner.ru
                 log.add(r, "CHECKER", "COUNTER_CHECK",
                         f"Counter {opt.option_id} " + ("passed all hard rules" if not failed else f"failed {', '.join(failed)}"),
                         rule_checks=checks, ref=opt.option_id)
-                if not failed and _key(opt) not in {_key(s) for s in seen}:
+                if not failed and _key(opt) in rejected_keys:
+                    log.add(r, "ORCH", "GUARDRAIL",
+                            f"Counter {opt.option_id} matches a plan the duty manager rejected; not offered",
+                            ref=opt.option_id)
+                elif not failed and _key(opt) not in {_key(s) for s in seen}:
                     counters.append(opt)
                     seen.append(opt)
 
@@ -257,11 +269,14 @@ async def negotiate(req: NegotiateRequest, deps: Deps, run_agent=agent_runner.ru
                + (f" (rejected: {'; '.join(rejections[-6:])})" if rejections else ""))
         log.add(rounds_used, "ORCH", "DECISION",
                 f"No agreement after {rounds_used} turn(s): {why}. Deterministic fallback decides.")
-        for cand in deps.generate_options(pub, shared, 10, [], 0, "A"):
-            match = next((o for o in seen if _key(o) == _key(cand)), None)
+        for cand in deps.generate_options(pub, shared, 10, rejected, 0, "A"):
+            match = next((o for o in seen if _key(o) == _key(cand) and _key(o) not in rejected_keys), None)
             cand = match or cand.model_copy(update={"option_id": ids.next()})
             if passes_gate(cand, "fallback candidate"):
                 fallback = cand
+                if match is None:
+                    log.add(rounds_used, "SOLVER", "OPTIONS",
+                            f"Fallback option {_describe(cand)} (new plan, not offered in any turn)", ref=cand.option_id)
                 break
     decision = deps.decide(final_options, turns_by_round, rounds_used, fallback)
     log.add(rounds_used, "ORCH", "DECISION",
