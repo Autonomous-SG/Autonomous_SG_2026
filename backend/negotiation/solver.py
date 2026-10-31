@@ -7,7 +7,7 @@ COST_WEIGHTS = {"arrival_delay": 1.0, "hold_min": .5, "gate_change": 10.0, "expe
 
 def make_option(public, landing_time, runway, gate, turnaround, *, option_id, source, proposed_by=None, round=1):
     hold = landing_time - public.eta_earliest; ingate = landing_time + public.taxi_in_min
-    turn = public.aircraft.min_turnaround_min if turnaround == "STANDARD" else public.aircraft.expedited_turnaround_min
+    turn = public.aircraft.standard_turnaround_min if turnaround == "STANDARD" else public.aircraft.expedited_turnaround_min
     nxt = None if public.next_leg is None else ingate + turn
     next_delay = 0 if public.next_leg is None else max(0, nxt - public.next_leg.scheduled_departure)
     breakdown = {"arrival_delay": ingate-public.flight.scheduled_arrival, "hold_min": hold, "gate_change": int(gate != public.planned_gate), "expedited": int(turnaround == "EXPEDITED"), "next_leg_delay": next_delay}
