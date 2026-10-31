@@ -114,6 +114,7 @@ Agents receive only the **`notes` string** of their private slice (messy free te
 7. **Convergence** — max 3 rounds, 1 counter per agent per round, per-call timeout 30 s, `max_tokens` cap, `stop_reason` `refusal`/`max_tokens` → status `REFUSAL`/`INVALID_OUTPUT` [P3].
 8. **Human in control** — UI shows a recommendation with Approve/Reject; nothing auto-executes [P4].
 9. **Everything logged** — `LogEntry` per step with rule checks and `ref` to `flights.csv#<row_id>` [P3].
+10. **Final safety gate** — before `decide`, every surviving option (and every fallback candidate) is re-checked with `rules.check_option`; any hard-rule failure is removed and logged as `GUARDRAIL` "Safety gate removed X … fails RULE". So even if all agents miss a violation, nothing unsafe is recommended. Count these in the eval ("violations agents missed, caught by gate") [P3].
 
 ## 8. Data
 
