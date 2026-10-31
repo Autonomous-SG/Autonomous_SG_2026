@@ -37,9 +37,11 @@ flights.csv row (real DOT 2015 disruption) ──► world builder ──► pub
 | Solver only (public data) | **83%** (20/24) | 48.7 min | 43.4 min | 35 |
 | **Negotiated (Vector)** | **0%** | **25.7 min** | **25.5 min** | **19** |
 | Oracle (solver given everyone's private data) | 0% | 25.6 min | 30.5 min | 19 |
+| Naive single prompt (one Claude call plays all 3 roles, sees all data, told every rule) | **33%** (8/24) | 30.4 min | 27.0 min | 35 |
 | What happened in 2015 (real weather) | — | 83.5 min | 57.0 min | — |
 
 - **0 unsafe recommendations** in 40 runs. Consensus 83%, fallback 4%, escalated (no feasible plan) 12%.
+- **Why not one prompt?** The challenge says not to combine the three roles. We measured it anyway: a single call with all the data still broke a hard rule in a third of the same scenarios (landing on a closed runway ×5, busy gate ×3). Splitting roles and verifying in code is what gets it to zero.
 - 79% converge in ≤ 2 turns; ~11 s and ~$0.07 per negotiation; 0 invalid LLM outputs.
 - **Red team:** prompt injection, lying agent, agent timeout, no-feasible scenario — 0 unsafe outcomes; every false veto rejected.
 - **Where it fails:** agents accepted 17 options that break a hard rule (mostly small airports with 1 runway and 2 spare gates); the final safety gate removed all of them. The checker also rejected 15 false vetoes. 2015 delays come from real weather, not our injected events, so that row is indicative only.
@@ -70,6 +72,7 @@ Put `flights.csv` from the Challenge #2 folder in `data/`. Other entry points (f
 - `.venv/bin/python -m scripts.run_once --row 20919` — one negotiation in the terminal
 - `.venv/bin/python -m scripts.check_deps --real` — offline integration check, no API cost
 - `.venv/bin/python -m scripts.run_eval --rows 24 --attack-rows 4` — live batch eval + red-team scorecard
+- `.venv/bin/python -m scripts.run_naive` — naive single-prompt baseline on the same scenarios
 - `.venv/bin/pytest tests/` — world builder tests
 
 ## Repo map
