@@ -102,7 +102,7 @@ def _aircraft(rng: random.Random, reference: bool, destination: str) -> Aircraft
         return Aircraft(
             type="MD-88",
             wake="MEDIUM",
-            min_turnaround_min=standard,
+            standard_turnaround_min=standard,
             expedited_turnaround_min=expedited,
         )
     choices = (
@@ -112,7 +112,7 @@ def _aircraft(rng: random.Random, reference: bool, destination: str) -> Aircraft
         ("A330", "HEAVY"),
     )
     kind, wake = rng.choice(choices)
-    return Aircraft(type=kind, wake=wake, min_turnaround_min=standard, expedited_turnaround_min=expedited)
+    return Aircraft(type=kind, wake=wake, standard_turnaround_min=standard, expedited_turnaround_min=expedited)
 
 
 def _reference_queue() -> list[QueuedArrival]:
