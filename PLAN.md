@@ -78,18 +78,38 @@ Agents receive only the **`notes` string** of their private slice (messy free te
    - `NO_FEASIBLE` — nothing survives → recommend diversion/escalation. Never guess.
 4. Always `requires_human = True`.
 
+## 4b. Organiser update (12:48) — `data/challenge2_operational_constraints.xlsx`
+
+Committed in the repo (`git pull`). **Use `backend/negotiation/constraints.py`** — don't parse the xlsx yourself:
+`constraints.airport("ATL")` → runways, gates, max ops/hour, min turnaround, spare gates · `constraints.wake_sep_min(leader, follower)` · `constraints.turnarounds("ATL")` → (standard, expedited) · fuel/crew constants (`FINAL_RESERVE_MIN`, `HOLD_BURN_KG_PER_MIN`, `DEFAULT_SPARE_HOLD_MIN`, `GROUND_SHIFT_H`, `GATE_CHANGE_NOTICE_MIN`, …).
+
+`rules_of_play`: one turn = each agent sends one structured message; consensus within 3 turns, **otherwise the deterministic fallback decides — log why** (implemented in orchestrator). Any limit we change must be stated in the demo.
+
+**P1 (Jasmitha):** gates = planned gate + `spare_gates` spares; runways from `active_runways` (closure removes one); arrival queue density from `max_runway_ops_per_hour`; aircraft turnaround from `turnarounds(dest)`; fuel: final reserve 30 min × burn, spare fuel default 45 min (vary per scenario only as a stated assumption); ground shifts 8 h.
+**P2 (Deepa):** wake separation via `wake_sep_min` (not 2/3 min); `MIN_TURNAROUND` floor = workbook minimum; `FUEL_RESERVE` = never below 30-min final reserve; `GATE_CONFLICT` also fails if gate ≠ planned and `in_gate_time − now < 20`; `decide` returns FALLBACK (not NO_FEASIBLE) when there's no agreement but `fallback` is given, NO_FEASIBLE only when `fallback is None`. See devkit for reference.
+
+### Stated assumptions (put on a demo slide)
+1. Workbook values are synthetic planning limits from the organisers; flights, delays, tail numbers and next legs are real (DOT 2015).
+2. Disruption events, arrival-queue times, gate occupancy, crew rosters, equipment, fuel on board and passenger connections are synthetic, seeded per scenario, and labelled in the UI.
+3. Wake separation (NM) converted to minutes at an assumed 140 kt final-approach speed. Wake classes: Heavy=HEAVY, Large=MEDIUM, Small=LIGHT; Super (A380) not modelled.
+4. Turnaround: EXPEDITED = workbook minimum, STANDARD = minimum + 10 min.
+5. Spare fuel on arrival defaults to 45 min of holding; scenarios may reduce it (e.g. DL912 has 20 min after departing 97 min late) — stated per scenario.
+6. Ground overtime normally allowed at 1.5× cost; a scenario may state "overtime cap reached" for a crew, making it a hard limit.
+7. Gate-change notice is measured from "now" to in-gate time.
+8. Flight-crew 13 h duty limit not modelled (never binding in single-leg scenarios).
+
 ## 5. Rules catalogue (simplified, documented as assumptions)
 
 | Rule | Domain | Hard? | Check |
 |---|---|---|---|
 | `RUNWAY_OPEN` | ATC | hard | runway open at `landing_time`; checker uses `atc.runway_reopen_actual` (truth), solver uses public `reopen_estimate` |
-| `WAKE_SEPARATION` | ATC | hard | vs every `arrival_queue` entry on same runway: gap ≥ 2 min; HEAVY leader → LIGHT follower ≥ 3 min |
+| `WAKE_SEPARATION` | ATC | hard | vs every `arrival_queue` entry on same runway: gap ≥ `constraints.wake_sep_min(leader, follower)` (workbook NM table at 140 kt) |
 | `SECTOR_THROUGHPUT` | ATC | soft | squeezing between queued arrivals |
 | `FUEL_RESERVE` | PILOT | hard | `hold_min ≤ (fuel_at_eta_kg − min_landing_fuel_kg) / hold_burn_kg_per_min` |
 | `PAX_CONNECTION` | PILOT | soft | margin = `departure − (in_gate_time + min_connect_min)`; < 0 → pax missed |
 | `NEXT_LEG_DELAY` | PILOT | soft | `next_leg_departure − next_leg.scheduled_departure` |
 | `MIN_TURNAROUND` | GROUND | hard | STANDARD = `min_turnaround_min`, EXPEDITED = `expedited_turnaround_min` |
-| `GATE_CONFLICT` | GROUND | hard | `in_gate_time ≥ gate_busy_until[gate]` |
+| `GATE_CONFLICT` | GROUND | hard | `in_gate_time ≥ gate_busy_until[gate]`, and if gate ≠ planned: `in_gate_time − now ≥ 20` (workbook gate-change notice) |
 | `CREW_DUTY_LIMIT` | GROUND | hard | team covering the gate: turnaround must end ≤ `shift_end` unless `overtime_allowed` |
 | `EQUIPMENT_AVAILABLE` | GROUND | hard | ≥ 1 TUG available at `next_leg_departure` |
 | `GATE_CHANGE` | GROUND | soft | gate ≠ planned gate |

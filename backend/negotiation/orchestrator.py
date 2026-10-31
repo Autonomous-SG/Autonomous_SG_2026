@@ -126,6 +126,7 @@ async def negotiate(req: NegotiateRequest, deps: Deps, run_agent=agent_runner.ru
     rounds: list[RoundRecord] = []
     turns_by_round: list[list[AgentTurn]] = []
     peers: list[PeerAssessment] = []
+    rejections: list[str] = []
     rounds_used = 0
 
     for r in range(1, MAX_ROUNDS + 1):
@@ -176,6 +177,7 @@ async def negotiate(req: NegotiateRequest, deps: Deps, run_agent=agent_runner.ru
                     turn.guardrail_flags.append(f"VETO_UNVERIFIED:{a.option_id}")
                     continue
                 confirmed_vetoes.add((turn.agent, a.option_id))
+                rejections.append(f"{a.option_id} {a.veto_rule} by {turn.agent}")
                 eliminated.add(a.option_id)
                 sc = deps.derive_shared_constraint(world, turn.agent, a.veto_rule, opt, r)
                 if sc and all(sc.statement != s.statement for s in shared + new_shared):
@@ -243,7 +245,13 @@ async def negotiate(req: NegotiateRequest, deps: Deps, run_agent=agent_runner.ru
 
     final_options = [o for o in final_options if passes_gate(o, "accepted by agents")]
     fallback = None
-    if any(t.status != "OK" for t in final_turns):
+    failed_agents = [t.agent for t in final_turns if t.status != "OK"]
+    if failed_agents or not final_options:
+        why = (f"{', '.join(failed_agents)} gave no valid answer" if failed_agents
+               else "no option was accepted by all three agents and passed every hard rule"
+               + (f" (rejected: {'; '.join(rejections[-6:])})" if rejections else ""))
+        log.add(rounds_used, "ORCH", "DECISION",
+                f"No agreement after {rounds_used} turn(s): {why}. Deterministic fallback decides.")
         for cand in deps.generate_options(pub, shared, 10, [], 0, "A"):
             match = next((o for o in seen if _key(o) == _key(cand)), None)
             cand = match or cand.model_copy(update={"option_id": ids.next()})

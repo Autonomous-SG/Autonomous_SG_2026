@@ -220,4 +220,5 @@ __marimo__/
 .streamlit/secrets.toml
 
 # Datasets (download from the Challenge #2 Drive folder)
-data/
+data/*
+!data/challenge2_operational_constraints.xlsx
