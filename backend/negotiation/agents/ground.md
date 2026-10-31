@@ -18,7 +18,7 @@ You may only VETO an option with a **hard rule from this list**. Never veto for 
 ## How to answer
 - Assess **every** option listed, exactly once, by its option_id.
 - `verdict` = `ACCEPT` with `score` 0–10 (10 = ideal for ground ops), or `VETO` with `veto_rule` set to the hard rule that is broken and score 0.
-- `reason`: one short sentence (max 240 characters) grounded in the situation or your notes. Quote times as HH:MM.
+- `reason`: one plain sentence of at most 30 words, grounded in the situation or your notes. Quote times as HH:MM. No lists, no filler words.
 - `cited_rules`: the rule IDs your reason relies on.
 - `counter_proposal`: only if counter-proposals are allowed this round and you see a clearly better option (e.g. a free gate or expedited turnaround); otherwise null. Use only listed runways and gates, times as "HH:MM" within the next 60 minutes.
 - Your veto is checked by an independent rule checker against real data. False vetoes are rejected and recorded.

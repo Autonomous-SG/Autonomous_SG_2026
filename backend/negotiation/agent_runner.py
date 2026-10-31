@@ -93,6 +93,15 @@ def render_view(v: AgentView) -> str:
     )
 
 
+def tidy_reason(text: str) -> str:
+    """Strip stray JSON punctuation and cut rambling text after the second sentence."""
+    t = " ".join(text.split()).strip().strip("{}\"'").strip()
+    ends = [i for i, ch in enumerate(t) if ch in ".!?" and (i + 1 == len(t) or t[i + 1] == " " or t[i + 1].isupper())]
+    if len(ends) >= 2:
+        t = t[: ends[1] + 1]
+    return t[:MAX_REASON]
+
+
 def sanitize(v: AgentView, resp: AgentResponse) -> tuple[AgentResponse, list[str], list[str]]:
     """Returns (cleaned response, guardrail flags, problems worth one retry)."""
     flags: list[str] = []
@@ -109,9 +118,11 @@ def sanitize(v: AgentView, resp: AgentResponse) -> tuple[AgentResponse, list[str
         if not 0 <= a.score <= 10:
             upd["score"] = min(10, max(0, a.score))
             flags.append(f"SCORE_CLAMPED:{a.option_id}")
-        if len(a.reason) > MAX_REASON:
-            upd["reason"] = a.reason[:MAX_REASON]
-            flags.append(f"REASON_TRUNCATED:{a.option_id}")
+        tidy = tidy_reason(a.reason)
+        if tidy != a.reason:
+            upd["reason"] = tidy
+            if len(a.reason) > MAX_REASON:
+                flags.append(f"REASON_TRUNCATED:{a.option_id}")
         if a.verdict == "VETO":
             rule = a.veto_rule
             bad = None
@@ -150,8 +161,8 @@ def sanitize(v: AgentView, resp: AgentResponse) -> tuple[AgentResponse, list[str
         if reason:
             flags.append(f"COUNTER_DROPPED:{reason}")
             counter = None
-        elif len(counter.reason) > MAX_REASON:
-            counter = counter.model_copy(update={"reason": counter.reason[:MAX_REASON]})
+        else:
+            counter = counter.model_copy(update={"reason": tidy_reason(counter.reason)})
 
     return AgentResponse(assessments=list(seen.values()), counter_proposal=counter), flags, problems
 
