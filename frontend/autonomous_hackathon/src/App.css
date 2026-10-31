@@ -195,7 +195,7 @@ h1 {
 
 .controls {
   display:grid;
-  grid-template-columns:1fr 1fr 1.3fr 1.25fr;
+  grid-template-columns:1fr 1fr 1fr 1.3fr 1.25fr;
   gap:16px;
   margin-top:18px;
   align-items:end
@@ -226,6 +226,40 @@ h1 {
 .controls select:disabled {
   background:#fafbfd
 }
+
+.airport-picker {
+  position:relative;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+}
+
+.airport-combobox { position:relative; }
+.controls .airport-combobox input { padding-right:38px; text-overflow:ellipsis; }
+.airport-chevron { position:absolute; right:16px; top:calc(50% - 4px); color:#526b8c; pointer-events:none; }
+.airport-combobox:has(input[aria-expanded=true]) .airport-chevron { transform:rotate(180deg); }
+.airport-popover {
+  position:absolute;
+  top:calc(100% + 8px);
+  left:0;
+  width:100%;
+  z-index:40;
+  padding:6px;
+  background:#fff;
+  border:1px solid #dbe4f0;
+  border-radius:8px;
+  box-shadow:0 8px 28px #142c4e24;
+}
+.airport-popover-caption { padding:7px 8px 10px; font-size:10px; color:#7789a2; border-bottom:1px solid #edf1f7; }
+.airport-options { max-height:230px; overflow-y:auto; overscroll-behavior:contain; scrollbar-width:thin; scrollbar-color:#c8d4e6 transparent; padding-top:4px; }
+.airport-option { width:100%; display:flex; align-items:center; gap:10px; padding:10px 8px; border:0; border-radius:5px; background:transparent; text-align:left; color:#3f5677; }
+.airport-option:hover,.airport-option--active { background:#eef4ff; }
+.airport-option[aria-selected=true] { color:#2859ab; }
+.airport-option-code { flex-shrink:0; width:34px; font-size:11px; font-weight:700; letter-spacing:.6px; }
+.airport-option-name { font-size:11px; line-height:1.5; overflow-wrap:anywhere; }
+.airport-option-check { margin-left:auto; color:#386bc5; }
+.airport-empty { padding:14px 8px; font-size:11px; color:#7b8ca2; line-height:1.7; }
 
 .run-button {
   border:0;
