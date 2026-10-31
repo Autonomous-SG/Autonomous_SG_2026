@@ -1,6 +1,13 @@
+// The 30 busiest destinations in flights.csv (plus AVL, DL912's next leg). Any other code can still be typed.
 export const airports = {
-  ATL: 'Atlanta', ORD: 'Chicago O’Hare', DFW: 'Dallas/Fort Worth',
-  AVL: 'Asheville', DEN: 'Denver', BOS: 'Boston', MIA: 'Miami',
+  ATL: 'Atlanta', AVL: 'Asheville', BOS: 'Boston', BWI: 'Baltimore', CLT: 'Charlotte',
+  DAL: 'Dallas Love Field', DCA: 'Washington National', DEN: 'Denver', DFW: 'Dallas/Fort Worth',
+  DTW: 'Detroit', EWR: 'Newark', FLL: 'Ft. Lauderdale', HOU: 'Houston Hobby',
+  IAH: 'Houston Intercontinental', JFK: 'New York JFK', LAS: 'Las Vegas', LAX: 'Los Angeles',
+  LGA: 'New York LaGuardia', MCO: 'Orlando', MDW: 'Chicago Midway', MIA: 'Miami',
+  MSP: 'Minneapolis', OAK: 'Oakland', ORD: 'Chicago O’Hare', PHL: 'Philadelphia',
+  PHX: 'Phoenix', SAN: 'San Diego', SEA: 'Seattle', SFO: 'San Francisco',
+  SLC: 'Salt Lake City', TPA: 'Tampa',
 }
 
 export const events = [
