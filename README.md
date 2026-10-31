@@ -6,6 +6,21 @@ When a runway closes or weather hits a hub, **ATC, the airline and ground ops** 
 
 **User:** the airline Operations Control duty manager at a hub, coordinating with tower and ramp control during a disruption.
 
+**The goal:** make disruption decisions faster, explainable and traceable, while keeping safety checks in code and humans in control. (Speed: ~11 s per negotiation is measured; the time today's phone-based process takes is not, so "faster" is an estimate.)
+
+## What it does
+
+Scenarios combine **real historical flight records** (DOT 2015 `flights.csv`) with **clearly labelled synthetic operational conditions** (the disruption, gate occupancy, crews, fuel, connections).
+
+The dashboard lets users:
+- select a flight by destination, source airport and date;
+- choose a disruption type (runway closure, weather capacity drop, gate equipment failure) and, for testing, an attack condition;
+- follow the negotiation turn by turn — each agent's votes, vetoes and counter-proposals;
+- inspect the rule checks behind every decision and each organisation's private notes;
+- compare the result against solver-only, oracle and historical outcomes;
+- approve or reject the recommendation (a rejected plan is never offered again for that flight);
+- review the full audit log.
+
 ## How it works
 
 ```
